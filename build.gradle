@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.2.20'
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "io.realm:realm-gradle-plugin:4.3.3"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    // Sdk and tools
+    minSdkVersion = 19
+    targetSdkVersion = 27
+    compileSdkVersion = 27
+    buildToolsVersion = '26.0.2'
+
+    // App dependencies
+    supportLibraryVersion = '27.0.2'
+
+    // RxJava
+    rxjava2Version = '2.1.8'
+    rxandroidVersion = '2.0.1'
+    rxkotlinVersion = '2.2.0'
+
+    // Dagger2
+    dagger2Version = '2.14.1'
+
+    // Anko
+    anko_version='0.10.4'
+
+    // Realm Adapter
+    realmAdapterVersion = '2.1.1'
+
+    // Picasoo Version
+    picassoVersion = '2.5.2'
+}
