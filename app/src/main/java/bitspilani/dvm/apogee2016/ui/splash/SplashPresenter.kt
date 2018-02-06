@@ -1,6 +1,7 @@
 package bitspilani.dvm.apogee2016.ui.splash
 
 import bitspilani.dvm.apogee2016.data.DataManager
+import bitspilani.dvm.apogee2016.di.PerActivity
 import bitspilani.dvm.apogee2016.ui.base.BasePresenter
 import bitspilani.dvm.apogee2016.utils.AppConstants
 import io.realm.*
@@ -10,6 +11,7 @@ import javax.inject.Inject
  * Created by Vaibhav on 24-01-2018.
  */
 
+@PerActivity
 class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataManager) : BasePresenter<V>(dataManager), SplashMvpPresenter<V> {
 
     override fun onAttach(mvpView: V) {

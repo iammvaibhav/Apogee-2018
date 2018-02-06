@@ -36,6 +36,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
 
     //RxJava
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava2Version"
@@ -44,7 +45,6 @@ dependencies {
 
     //Dagger2
     implementation "com.google.dagger:dagger:$rootProject.dagger2Version"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     kapt "com.google.dagger:dagger-compiler:$rootProject.dagger2Version"
 
     // Anko
@@ -55,6 +55,9 @@ dependencies {
 
     // Picasso
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
+
+    // Shadow Layout
+    implementation(name: 'shadowlayout', ext: 'aar')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

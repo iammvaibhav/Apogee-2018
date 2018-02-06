@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="BIBShadowHeight">64dp</dimen>
+    <dimen name="BIBBarHeight">64dp</dimen>
+    <dimen name="BIBIconsHeight">24dp</dimen>
+    <dimen name="ongoingWidth">21dp</dimen>
+    <dimen name="labelSize">12sp</dimen>
+    <dimen name="toolbarIconsMargin">14dp</dimen>
+    <dimen name="toolbarSize">64dp</dimen>
+    <dimen name="headerSize">56dp</dimen>
+    <dimen name="navButtonMargin">24dp</dimen>
+    <dimen name="navButtonsPadding">20dp</dimen>
+    <dimen name="subLabelSizeMax">28sp</dimen>
+    <dimen name="subLabelSizeMin">10sp</dimen>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item android:id="@+id/action_profile"
+            android:title="@string/navigation_item_profile"
+            android:icon="@drawable/ic_profile"
+            app:showAsAction="withText"/>
+        <item android:id="@+id/action_events"
+            android:title="@string/navigation_item_events"
+            android:icon="@drawable/ic_events"
+            app:showAsAction="withText"/>
+        <item android:id="@+id/action_map"
+            android:title="@string/navigation_item_map"
+            android:icon="@drawable/ic_map"
+            app:showAsAction="withText"/>
+        <item android:id="@+id/action_ongoing"
+            android:title="@string/navigation_item_ongoing"
+            android:icon="@drawable/ic_ongoing"
+            app:showAsAction="withText"/>
+</menu>

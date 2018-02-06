@@ -20,6 +20,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 
@@ -36,6 +39,9 @@ ext {
 
     // App dependencies
     supportLibraryVersion = '27.0.2'
+
+    // Constraint Layout
+    constraintLayoutVersion = '1.0.2'
 
     // RxJava
     rxjava2Version = '2.1.8'

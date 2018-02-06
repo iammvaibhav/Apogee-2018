@@ -2,6 +2,7 @@ package bitspilani.dvm.apogee2016.di.component
 
 import bitspilani.dvm.apogee2016.di.PerActivity
 import bitspilani.dvm.apogee2016.di.module.ActivityModule
+import bitspilani.dvm.apogee2016.ui.main.MainActivity
 import bitspilani.dvm.apogee2016.ui.splash.SplashActivity
 import dagger.Component
 
@@ -13,4 +14,5 @@ import dagger.Component
 @Component(modules = [ActivityModule::class])
 interface ActivityComponent {
     fun inject(splashActivity: SplashActivity)
+    fun inject(mainActivity: MainActivity)
 }

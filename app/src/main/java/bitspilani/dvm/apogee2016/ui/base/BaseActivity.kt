@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity(), MvpView {
         snackbar.show()
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         if (message != null) {
             showSnackBar(message)
         } else {

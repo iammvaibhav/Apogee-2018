@@ -5,5 +5,5 @@ package bitspilani.dvm.apogee2016.ui.base
  */
 
 interface MvpView {
-    fun onError(message: String)
+    fun onError(message: String?)
 }

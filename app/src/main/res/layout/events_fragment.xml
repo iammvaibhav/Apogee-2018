@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/headerSize">
+
+        <ImageView
+            android:id="@+id/prev"
+            android:layout_width="@dimen/headerSize"
+            android:layout_height="@dimen/headerSize"
+            app:srcCompat="@drawable/ic_prev"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/navButtonsPadding"
+            android:layout_marginLeft="@dimen/navButtonMargin" />
+
+        <TextView
+            android:id="@+id/subLabel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="SUB HEADINGS"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="@dimen/subLabelSizeMax"
+            app:autoSizeMinTextSize="@dimen/subLabelSizeMin"
+            app:autoSizeStepGranularity="2sp" />
+
+        <ImageView
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_next"
+            android:layout_gravity="center_vertical|right"
+            android:padding="@dimen/navButtonsPadding"
+            android:layout_marginRight="@dimen/navButtonMargin" />
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/headerSize" />
+
+</FrameLayout>
