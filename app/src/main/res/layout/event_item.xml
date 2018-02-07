@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.chauthai.swipereveallayout.SwipeRevealLayout
+    android:id="@+id/swipeRevealLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:mode="same_level"
+    app:dragEdge="right">
+
+    <!-- Your secondary layout here -->
+    <ImageView
+        android:id="@+id/mark_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        app:srcCompat="@drawable/mark_favourite"/>
+
+    <!-- Your main layout here -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:text="Event Name"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="@dimen/eventItemHeadingSizeMax"
+            app:autoSizeStepGranularity="2sp"
+            android:layout_marginRight="50dp"
+            tools:ignore="MissingPrefix"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="45dp">
+            <TextView
+                android:id="@+id/venue"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="@dimen/eventItemVTSizeMax"
+                app:autoSizeStepGranularity="2sp"
+                tools:ignore="MissingPrefix"
+                android:textColor="#707070"
+                android:text="Venue"/>
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="@dimen/eventItemVTSizeMax"
+                app:autoSizeStepGranularity="2sp"
+                tools:ignore="MissingPrefix"
+                android:textColor="#707070"
+                android:text="Time"/>
+            <android.support.v4.widget.Space
+                android:layout_width="50dp"
+                android:layout_height="25dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/show_favourite"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            app:srcCompat="@drawable/show_favourite"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="14dp"/>
+
+    </FrameLayout>
+
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

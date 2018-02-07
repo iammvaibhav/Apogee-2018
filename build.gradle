@@ -59,4 +59,7 @@ ext {
 
     // Picasoo Version
     picassoVersion = '2.5.2'
+
+    // Swipe reveal layout version
+    swipeRevealLayoutVersion = '1.4.1'
 }

@@ -1,13 +1,12 @@
 package bitspilani.dvm.apogee2016.ui.base
 
 import bitspilani.dvm.apogee2016.data.DataManager
-import javax.inject.Inject
 
 /**
  * Created by Vaibhav on 24-01-2018.
  */
 
-open class BasePresenter<V: MvpView> @Inject constructor(private val mDataManager: DataManager) : MvpPresenter<V> {
+open class BasePresenter<V: MvpView> constructor(private val mDataManager: DataManager) : MvpPresenter<V> {
 
     private var mMvpView: V? = null
 

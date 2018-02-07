@@ -66,4 +66,6 @@ class AppPreferencesHelper : PreferencesHelper {
     }
 
     private fun getStringSet(key: String) = sharedPreferences.getStringSet(key, HashSet<String>())
+
+    override fun isFavourite(id: Int) = getFavouritesArray().contains(id)
 }

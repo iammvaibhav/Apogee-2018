@@ -3,6 +3,8 @@ package bitspilani.dvm.apogee2016.ui.splash
 import android.os.Bundle
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
+import bitspilani.dvm.apogee2016.ui.main.MainActivity
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
@@ -33,6 +35,6 @@ class SplashActivity : BaseActivity(), SplashMvpView {
     }
 
     override fun openMainActivity() {
-        toast("Open main activity")
+        startActivity<MainActivity>()
     }
 }

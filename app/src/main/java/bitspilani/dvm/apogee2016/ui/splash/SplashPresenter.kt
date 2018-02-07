@@ -14,6 +14,8 @@ import javax.inject.Inject
 @PerActivity
 class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataManager) : BasePresenter<V>(dataManager), SplashMvpPresenter<V> {
 
+    lateinit var realm: Realm
+
     override fun onAttach(mvpView: V) {
         super.onAttach(mvpView)
 
@@ -22,10 +24,12 @@ class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataMan
                     .waitForInitialRemoteData()
                     .build()
 
+
             Realm.setDefaultConfiguration(config)
             Realm.getInstanceAsync(config, object : Realm.Callback() {
                 override fun onSuccess(realm: Realm) {
                     // Realm Instance Ready
+                    this@SplashPresenter.realm = realm
                     if (getDataManager().isOnboardingRequired()) {
                         getDataManager().setOnBoardingRequired(false)
                         getMvpView()?.openOnboardingActivity()
@@ -60,4 +64,8 @@ class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataMan
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        realm.close()
+    }
 }

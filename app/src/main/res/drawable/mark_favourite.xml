@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#EF8D0C"
+                android:endColor="#EF0C0C"
+                android:angle="45"/>
+        </shape>
+    </item>
+    <item>
+        <vector
+            android:width="66.6dp"
+            android:height="80dp"
+            android:viewportWidth="190.0"
+            android:viewportHeight="228.0">
+            <path
+                android:pathData="M106.02,90.4C100.73,90.4 95.44,95.69 95.44,100.98 95.44,95.69 90.15,90.4 84.87,90.4 74.29,90.4 69,97.28 69,106.27 69,122.13 95.44,138 95.44,138S121.89,122.13 121.89,106.27C121.89,97.28 116.6,90.4 106.02,90.4Z"
+                android:fillColor="#fff"/>
+        </vector>
+    </item>
+</layer-list>

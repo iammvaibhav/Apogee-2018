@@ -19,7 +19,9 @@ abstract class BaseFragment : Fragment(), MvpView {
         if (context is BaseActivity) {
             this.mActivity = context
         }
-        mFragmentComponent = DaggerFragmentComponent.builder().build()
+        mFragmentComponent = DaggerFragmentComponent.builder()
+                .activityComponent(getBaseActivity().getActivityComponent())
+                .build()
     }
 
     override fun onError(message: String?) {

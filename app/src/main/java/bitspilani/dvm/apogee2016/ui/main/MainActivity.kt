@@ -5,6 +5,7 @@ import android.widget.Toast
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListener
+import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import kotlinx.android.synthetic.main.main_screen.*
 import javax.inject.Inject
 
@@ -23,6 +24,7 @@ class MainActivity : BaseActivity(), MainMvpView {
 
         getActivityComponent().inject(this)
         mainPresenter.onAttach(this)
+        supportFragmentManager.beginTransaction().add(R.id.container, EventsFragment()).commit()
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
             override fun onCenterButtonClick() {

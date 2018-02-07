@@ -23,4 +23,6 @@ class AppDataManager @Inject constructor(val realmDb: AppRealmDbHelper, val pref
     override fun isOnboardingRequired() = pref.isOnboardingRequired()
 
     override fun setOnBoardingRequired(required: Boolean) { pref.setOnBoardingRequired(required) }
+
+    override fun isFavourite(id: Int) = pref.isFavourite(id)
 }
