@@ -18,7 +18,7 @@ import bitspilani.dvm.apogee2016.data.firebase.model.Event
  * Created by Vaibhav on 04-02-2018.
  */
 
-class EventsViewPagerAdapter(private val queriedEvents: List<Pair<String, List<Event>>>,
+class EventsViewPagerAdapter(val queriedEvents: List<Pair<String, List<Event>>>,
                              private val showBy: Int,
                              private val dataManager: DataManager,
                              private val lightFont: Typeface,

@@ -23,7 +23,7 @@ import javax.inject.Inject
  * Created by Vaibhav on 04-02-2018.
  */
 
-class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeListener {
+class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeListener, View.OnClickListener {
 
     @Inject
     lateinit var eventsMvpPresenter: EventsPresenter<EventsMvpView>
@@ -59,10 +59,20 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         prev = view.findViewById(R.id.prev)
         heading = view.findViewById(R.id.subLabel)
         heading.typeface = regularFont
-
         eventsMvpPresenter.onAttach(this)
         initialization.initialize()
         return view
+    }
+
+    override fun onClick(v: View) {
+        when(v.id) {
+            R.id.next -> {
+
+            }
+            R.id.prev -> {
+
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -74,7 +84,6 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         val showBy = if(filterEvents.showBy == ShowBy.DATE) 0 else 1
         viewPager.adapter = EventsViewPagerAdapter(data, showBy, eventsMvpPresenter.getDataManager(), lightFont, regularFont)
         heading.text = data[0].first
-        currViewPagerData = data
     }
 
     override fun onPageScrollStateChanged(state: Int) {
@@ -86,6 +95,7 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     }
 
     override fun onPageSelected(position: Int) {
-        heading.text = currViewPagerData[position].first
+        val headText = (viewPager.adapter as EventsViewPagerAdapter?)?.queriedEvents?.get(position)?.first ?: ""
+        heading.text = headText
     }
 }

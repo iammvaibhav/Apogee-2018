@@ -16,16 +16,18 @@ import java.text.SimpleDateFormat
  * Created by Vaibhav on 06-02-2018.
  */
 
-class EventsRecyclerViewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val eventName = itemView.findViewById<TextView>(R.id.eventName)
-    val eventVenue = itemView.findViewById<TextView>(R.id.venue)
-    val eventTime = itemView.findViewById<TextView>(R.id.time)
-    val markFavourite = itemView.findViewById<ShineButton>(R.id.mark_favourite)
-
-}
-
 class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val dataManager: DataManager,
-                               val lightFont: Typeface, val regularFont: Typeface) : RecyclerView.Adapter<EventsRecyclerViewViewHolder>(){
+                               val lightFont: Typeface, val regularFont: Typeface) : RecyclerView.Adapter<EventsRecylerViewAdapter.Companion.EventsRecyclerViewViewHolder>(){
+
+    companion object {
+        class EventsRecyclerViewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val eventName = itemView.findViewById<TextView>(R.id.eventName)
+            val eventVenue = itemView.findViewById<TextView>(R.id.venue)
+            val eventTime = itemView.findViewById<TextView>(R.id.time)
+            val markFavourite = itemView.findViewById<ShineButton>(R.id.mark_favourite)
+
+        }
+    }
 
     val parse = SimpleDateFormat("HH:mm")
     val shows0 = SimpleDateFormat("hh:mm a")

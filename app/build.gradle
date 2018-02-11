@@ -4,8 +4,6 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply plugin: 'realm-android'
-
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -51,9 +49,6 @@ dependencies {
     // Anko
     implementation "org.jetbrains.anko:anko:$anko_version"
 
-    // Realm Adapter
-    implementation "io.realm:android-adapters:$rootProject.realmAdapterVersion"
-
     // Picasso
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
 
@@ -65,10 +60,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-}
-
-realm {
-    syncEnabled = true
 }
 
 

@@ -1,12 +1,13 @@
 package bitspilani.dvm.apogee2016
 
 import android.app.Application
-import io.realm.Realm
+import com.google.firebase.database.FirebaseDatabase
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Realm.init(this)
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        FirebaseDatabase.getInstance().getReference("Events").keepSynced(true)
     }
 }
