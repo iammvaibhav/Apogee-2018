@@ -45,6 +45,7 @@ dependencies {
 
     //Dagger2
     implementation "com.google.dagger:dagger:$rootProject.dagger2Version"
+    implementation 'com.google.firebase:firebase-database:11.0.4'
     kapt "com.google.dagger:dagger-compiler:$rootProject.dagger2Version"
 
     // Anko
@@ -56,11 +57,8 @@ dependencies {
     // Picasso
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
 
-    // Swipe reveal layout
-    implementation "com.chauthai.swipereveallayout:swipe-reveal-layout:$rootProject.swipeRevealLayoutVersion"
-
-    // Shadow Layout
-    implementation(name: 'shadowlayout', ext: 'aar')
+    // Shine Button
+    implementation "com.sackcentury:shinebutton:$rootProject.shineButtonVersion"
 
     debugCompile 'com.amitshekhar.android:debug-db:1.0.2'
 
@@ -72,3 +70,6 @@ dependencies {
 realm {
     syncEnabled = true
 }
+
+
+apply plugin: 'com.google.gms.google-services'

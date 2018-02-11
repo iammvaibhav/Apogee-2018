@@ -173,7 +173,8 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
         invalidate()
     }
 
-    override fun onPageScrollStateChanged(state: Int) {}
+    override fun onPageScrollStateChanged(state: Int) {
+    }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

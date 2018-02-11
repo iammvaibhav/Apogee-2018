@@ -14,7 +14,7 @@ import javax.inject.Inject
 @PerActivity
 class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataManager) : BasePresenter<V>(dataManager), SplashMvpPresenter<V> {
 
-    lateinit var realm: Realm
+    var realm: Realm? = null
 
     override fun onAttach(mvpView: V) {
         super.onAttach(mvpView)
@@ -66,6 +66,6 @@ class SplashPresenter<V: SplashMvpView> @Inject constructor(dataManager: DataMan
 
     override fun onDetach() {
         super.onDetach()
-        realm.close()
+        realm?.close()
     }
 }

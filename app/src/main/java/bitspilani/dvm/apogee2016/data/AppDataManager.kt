@@ -1,7 +1,9 @@
 package bitspilani.dvm.apogee2016.data
 
+import bitspilani.dvm.apogee2016.data.firebase.AppFirebaseHelper
+import bitspilani.dvm.apogee2016.data.firebase.model.Event
+import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.data.prefs.AppPreferencesHelper
-import bitspilani.dvm.apogee2016.data.realmdb.AppRealmDbHelper
 import bitspilani.dvm.apogee2016.di.PerActivity
 import javax.inject.Inject
 
@@ -10,7 +12,7 @@ import javax.inject.Inject
  */
 
 @PerActivity
-class AppDataManager @Inject constructor(val realmDb: AppRealmDbHelper, val pref: AppPreferencesHelper) : DataManager {
+class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pref: AppPreferencesHelper) : DataManager {
 
     override fun addAsFavourite(id: Int) { pref.addAsFavourite(id) }
 
@@ -25,4 +27,16 @@ class AppDataManager @Inject constructor(val realmDb: AppRealmDbHelper, val pref
     override fun setOnBoardingRequired(required: Boolean) { pref.setOnBoardingRequired(required) }
 
     override fun isFavourite(id: Int) = pref.isFavourite(id)
+
+    override fun getEvents(filterEvents: FilterEvents, exec: (List<Pair<String, List<Event>>>) -> Unit) {
+        firebase.getEvents(filterEvents, exec)
+    }
+
+    override fun getVenueList(exec: (List<String>) -> Unit) {
+        firebase.getVenueList(exec)
+    }
+
+    override fun getCategoryList(exec: (List<String>) -> Unit) {
+        firebase.getCategoryList(exec)
+    }
 }

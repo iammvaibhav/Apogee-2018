@@ -1,7 +1,6 @@
 package bitspilani.dvm.apogee2016.data.prefs
 
 import android.content.Context
-import android.content.SharedPreferences
 import bitspilani.dvm.apogee2016.di.ActivityContext
 import bitspilani.dvm.apogee2016.di.PerActivity
 import org.jetbrains.anko.defaultSharedPreferences
@@ -13,9 +12,9 @@ import javax.inject.Inject
  */
 
 @PerActivity
-class AppPreferencesHelper : PreferencesHelper {
+class AppPreferencesHelper @Inject constructor(@ActivityContext context: Context): PreferencesHelper {
 
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences = context.defaultSharedPreferences
 
     private val PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE"
     private val PREF_KEY_CURRENT_USER_ID = "PREF_KEY_CURRENT_USER_ID"
@@ -26,11 +25,6 @@ class AppPreferencesHelper : PreferencesHelper {
 
     private val PREF_KEY_IS_ONBOARDING_REQUIRED = "PREF_KEY_IS_ONBOARDING_REQUIRED"
     private val PREF_KEY_FAVOURITE_LIST = "PREF_KEY_FAVOURITE_LIST"
-
-    @Inject
-    constructor(@ActivityContext context: Context) {
-        sharedPreferences = context.defaultSharedPreferences
-    }
 
     override fun addAsFavourite(id: Int) {
         val list = getStringSet(PREF_KEY_FAVOURITE_LIST)

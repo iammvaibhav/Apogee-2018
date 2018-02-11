@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="500dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/closeButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@drawable/ic_close"
+        android:padding="15dp"
+        android:layout_marginRight="7dp"/>
+
+    <LinearLayout
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_prev"
+            android:tint="#fff"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"/>
+</LinearLayout>
