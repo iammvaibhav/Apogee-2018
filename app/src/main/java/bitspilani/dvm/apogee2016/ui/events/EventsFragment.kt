@@ -16,6 +16,7 @@ import bitspilani.dvm.apogee2016.data.firebase.model.ShowBy
 import bitspilani.dvm.apogee2016.di.Light
 import bitspilani.dvm.apogee2016.di.Regular
 import bitspilani.dvm.apogee2016.ui.base.BaseFragment
+import bitspilani.dvm.apogee2016.ui.main.CC
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
 import javax.inject.Inject
 
@@ -27,11 +28,11 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
 
     @Inject
     lateinit var eventsMvpPresenter: EventsPresenter<EventsMvpView>
-    lateinit var initialization: EventInitialization
     private lateinit var viewPager: ViewPager
     private lateinit var next: ImageView
     private lateinit var prev: ImageView
     private lateinit var heading: TextView
+    lateinit var eventClickListener: EventClickListener
 
 
     @Inject
@@ -42,12 +43,10 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     @field:Light
     lateinit var lightFont: Typeface
 
-    lateinit var currViewPagerData: List<Pair<String, List<Event>>>
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        initialization = getBaseActivity() as MainActivity
         (getBaseActivity() as MainActivity).setHeading("EVENTS")
+        eventClickListener = (getBaseActivity() as MainActivity)
         getFragmentComponent().inject(this)
     }
 
@@ -57,20 +56,25 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         viewPager.addOnPageChangeListener(this)
         next = view.findViewById(R.id.next)
         prev = view.findViewById(R.id.prev)
+        next.setOnClickListener(this)
+        prev.setOnClickListener(this)
         heading = view.findViewById(R.id.subLabel)
         heading.typeface = regularFont
         eventsMvpPresenter.onAttach(this)
-        initialization.initialize()
+        (getBaseActivity() as MainActivity).initialize()
         return view
     }
 
     override fun onClick(v: View) {
         when(v.id) {
             R.id.next -> {
-
+                val count = viewPager.childCount
+                if (viewPager.currentItem < count - 1)
+                    viewPager.setCurrentItem(viewPager.currentItem + 1, true)
             }
             R.id.prev -> {
-
+                if (viewPager.currentItem > 0)
+                    viewPager.setCurrentItem(viewPager.currentItem - 1, true)
             }
         }
     }
@@ -82,8 +86,13 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
 
     fun setViewPagerAdapter(filterEvents: FilterEvents, data : List<Pair<String, List<Event>>>) {
         val showBy = if(filterEvents.showBy == ShowBy.DATE) 0 else 1
-        viewPager.adapter = EventsViewPagerAdapter(data, showBy, eventsMvpPresenter.getDataManager(), lightFont, regularFont)
-        heading.text = data[0].first
+        viewPager.adapter = EventsViewPagerAdapter(data, showBy, eventsMvpPresenter.getDataManager(), lightFont, regularFont, eventClickListener)
+        if (data.isNotEmpty())
+                heading.text = data[0].first
+        else heading.text = "NO RESULTS"
+        heading.setTextColor(CC.getScreenColorFor(0).colorB)
+        next.setColorFilter(CC.getScreenColorFor(0).colorB)
+        prev.setColorFilter(CC.getScreenColorFor(0).colorB)
     }
 
     override fun onPageScrollStateChanged(state: Int) {
@@ -97,5 +106,8 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     override fun onPageSelected(position: Int) {
         val headText = (viewPager.adapter as EventsViewPagerAdapter?)?.queriedEvents?.get(position)?.first ?: ""
         heading.text = headText
+        heading.setTextColor(CC.getScreenColorFor(position).colorB)
+        next.setColorFilter(CC.getScreenColorFor(position).colorB)
+        prev.setColorFilter(CC.getScreenColorFor(position).colorB)
     }
 }

@@ -22,7 +22,8 @@ class EventsViewPagerAdapter(val queriedEvents: List<Pair<String, List<Event>>>,
                              private val showBy: Int,
                              private val dataManager: DataManager,
                              private val lightFont: Typeface,
-                             private val regularFont: Typeface)  : PagerAdapter() {
+                             private val regularFont: Typeface,
+                             private val eventClickListener: EventClickListener)  : PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val recyclerView = RecyclerView(container.context)
@@ -36,7 +37,7 @@ class EventsViewPagerAdapter(val queriedEvents: List<Pair<String, List<Event>>>,
         val dividerItemDecoration = DividerItemDecoration(recyclerView.context,
                 layoutManager.orientation)
         recyclerView.addItemDecoration(dividerItemDecoration)
-        recyclerView.adapter = EventsRecylerViewAdapter(queriedEvents[position].second, showBy, dataManager, lightFont, regularFont)
+        recyclerView.adapter = EventsRecylerViewAdapter(queriedEvents[position].second, showBy, dataManager, lightFont, regularFont, position, eventClickListener)
         container.addView(recyclerView)
         return recyclerView
     }

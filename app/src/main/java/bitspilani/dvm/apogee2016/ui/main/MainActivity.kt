@@ -17,12 +17,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import bitspilani.dvm.apogee2016.R
+import bitspilani.dvm.apogee2016.data.firebase.model.Event
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.data.firebase.model.ShowBy
 import bitspilani.dvm.apogee2016.di.SemiBold
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListener
-import bitspilani.dvm.apogee2016.ui.events.EventInitialization
+import bitspilani.dvm.apogee2016.ui.events.EventClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import bitspilani.dvm.apogee2016.utils.PathParser
 import kotlinx.android.synthetic.main.event_bottom_sheet.*
@@ -38,7 +39,13 @@ import javax.inject.Inject
  * Created by Vaibhav on 29-01-2018.
  */
 
-class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventInitialization {
+class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventClickListener {
+
+    class ScreenColor(colorA: String, colorB: String, colorC: String) {
+        val colorA = Color.parseColor(colorA)
+        val colorB = Color.parseColor(colorB)
+        val colorC = Color.parseColor(colorC)
+    }
 
     @Inject
     lateinit var mainPresenter: MainPresenter<MainMvpView>
@@ -164,15 +171,30 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventIni
             override fun onClickItem(position: Int) {
                 when(position) {
                     0 -> {}
-                    1 -> addFragment(eventsFragment)
+                    1 -> {
+                        addFragment(eventsFragment)
+                        val filterE = FilterEvents()
+                        mainPresenter.getDataManager().getEvents(filterE) {
+                            filterEvents = filterE
+                            eventsFragment.setViewPagerAdapter(filterE, it)
+                        }
+                    }
                     2 -> {}
-                    3 -> {}
+                    3 -> {
+                        addFragment(eventsFragment)
+                        val filterE = FilterEvents()
+                        filterE.filterByOngoing = true
+                        mainPresenter.getDataManager().getEvents(filterE) {
+                            filterEvents = filterE
+                            eventsFragment.setViewPagerAdapter(filterE, it)
+                        }
+                    }
                 }
             }
         })
     }
 
-    override fun initialize() {
+    fun initialize() {
         mainPresenter.getDataManager().getEvents(filterEvents) {
             eventsFragment.setViewPagerAdapter(filterEvents, it)
         }
@@ -184,7 +206,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventIni
 
     override fun onClick(view: View) {
         when(view.id) {
-            R.id.hamburger -> drawerLayout.openDrawer(Gravity.END)
+            R.id.hamburger -> drawerLayout.openDrawer(Gravity.START)
             R.id.closeLeft -> drawerLayout.closeDrawer(Gravity.START)
             R.id.closeRight -> drawerLayout.closeDrawer(Gravity.END)
             R.id.options -> {
@@ -248,6 +270,33 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventIni
                 eventBottomSheet.removeAllViews()
                 eventBottomSheet.addView(bottomSheetFilterView)
             }
+        }
+    }
+
+    override fun onEventClick(event: Event, isFavourite: Boolean, tim: String) {
+        eventName1.text = event.name
+        venue1.text = event.venue
+        time1.text = tim
+        description.text = event.description
+        remindMe.isChecked = isFavourite
+        drawerLayout.openDrawer(Gravity.END)
+        rules.setOnClickListener {
+            if (rules.text == "rules") {
+                rules.text = "description"
+                description.text = event.rules
+            }
+            else {
+                rules.text = "rules"
+                description.text = event.description
+            }
+        }
+        remindMe.setOnCheckedChangeListener { buttonView, isChecked ->
+            //TODO("Set notification")
+            if (isChecked)
+                mainPresenter.getDataManager().addAsFavourite(event.id)
+            else
+                mainPresenter.getDataManager().removeAsFavourite(event.id)
+
         }
     }
 
@@ -342,7 +391,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventIni
     }
 
     fun addFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().add(R.id.container, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
 }

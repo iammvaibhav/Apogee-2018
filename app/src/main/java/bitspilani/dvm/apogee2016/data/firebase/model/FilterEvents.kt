@@ -37,3 +37,4 @@ class FilterEvents {
         return "showBy: $showBy ongoing : $filterByOngoing, fav : $filterByFavourites, venue: $excludeVenue, category: $excludeCategory"
     }
 }
+

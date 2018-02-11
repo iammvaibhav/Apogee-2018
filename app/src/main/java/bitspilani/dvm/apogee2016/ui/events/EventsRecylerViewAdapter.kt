@@ -9,6 +9,7 @@ import android.widget.TextView
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.data.DataManager
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
+import bitspilani.dvm.apogee2016.ui.main.CC
 import com.sackcentury.shinebuttonlib.ShineButton
 import java.text.SimpleDateFormat
 
@@ -17,7 +18,8 @@ import java.text.SimpleDateFormat
  */
 
 class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val dataManager: DataManager,
-                               val lightFont: Typeface, val regularFont: Typeface) : RecyclerView.Adapter<EventsRecylerViewAdapter.Companion.EventsRecyclerViewViewHolder>(){
+                               val lightFont: Typeface, val regularFont: Typeface, val position: Int,
+                               val eventClickListener: EventClickListener) : RecyclerView.Adapter<EventsRecylerViewAdapter.Companion.EventsRecyclerViewViewHolder>(){
 
     companion object {
         class EventsRecyclerViewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,7 +27,6 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
             val eventVenue = itemView.findViewById<TextView>(R.id.venue)
             val eventTime = itemView.findViewById<TextView>(R.id.time)
             val markFavourite = itemView.findViewById<ShineButton>(R.id.mark_favourite)
-
         }
     }
 
@@ -39,12 +40,15 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
         holder.eventName.typeface = regularFont
         holder.eventTime.typeface = lightFont
         holder.eventVenue.typeface = lightFont
+
         return holder
     }
 
     override fun onBindViewHolder(holder: EventsRecyclerViewViewHolder, position: Int) {
         // showBy == 0 -> by date & 1 -> by category
 
+        holder.markFavourite.setBtnFillColor(CC.getScreenColorFor(this.position).colorB)
+        holder.markFavourite.setAllowRandomColor(true)
         val event = eventsData[position]
 
         //setting basic data
@@ -69,6 +73,17 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
                 dataManager.addAsFavourite(event.id)
             else
                 dataManager.removeAsFavourite(event.id)
+        }
+
+        holder.itemView.setOnClickListener {
+            val shows2 = SimpleDateFormat("hh:mm a")
+            var tim = ""
+            try {
+                tim = shows2.format(parse.parse(event.startTime)) + ", DAY ${event.day - 21}"
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+            eventClickListener.onEventClick(event, dataManager.isFavourite(event.id), tim)
         }
     }
 
