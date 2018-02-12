@@ -13,4 +13,22 @@ interface PreferencesHelper {
     fun clearFavourites()
     fun isOnboardingRequired(): Boolean
     fun setOnBoardingRequired(required: Boolean)
+
+    fun setUserLoggedIn(loggedIn: Boolean)
+    fun getUserLoggedIn(): Boolean
+    fun setCurrentUserId(id: String)
+    fun getCurrentUserId(): String
+    fun setCurrentUserUsername(username: String)
+    fun getCurrentUserUsername(): String
+    fun setCurrentUserPassword(password: String)
+    fun getCurrentUserPassword(): String
+    fun setCurrentUserName(name: String)
+    fun getCurrentUserName(): String
+    fun setCurrentUserEmail(email: String)
+    fun getCurrentUserEmail(): String
+    fun setCurrentUserProfileURL(url: String)
+    fun getCurrentUserProfileURL(): String
+    fun setCurrentUserAccessToken(token: String)
+    fun getCurrentUserAccessToken(): String
+
 }

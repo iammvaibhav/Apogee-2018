@@ -1,14 +1,23 @@
 package bitspilani.dvm.apogee2016.ui.main
 
+import android.Manifest
+import android.app.AlertDialog
+import android.app.Fragment
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.PathShape
+import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.Fragment
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -26,6 +35,12 @@ import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListene
 import bitspilani.dvm.apogee2016.ui.events.EventClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import bitspilani.dvm.apogee2016.utils.PathParser
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.event_bottom_sheet.*
 import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen.*
@@ -34,12 +49,11 @@ import kotlinx.android.synthetic.main.right_drawer.*
 import org.jetbrains.anko.backgroundDrawable
 import javax.inject.Inject
 
-
 /**
  * Created by Vaibhav on 29-01-2018.
  */
 
-class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventClickListener {
+class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventClickListener, OnMapReadyCallback {
 
     class ScreenColor(colorA: String, colorB: String, colorC: String) {
         val colorA = Color.parseColor(colorA)
@@ -76,12 +90,19 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     lateinit var recyclerView: RecyclerView
 
     val eventsFragment by lazy { EventsFragment() }
+    val mapFragment by lazy { MapFragment() }
 
     var filterEvents = FilterEvents()
     var filterEventsCurrSession = FilterEvents()
 
     val venueList = mutableListOf<String>()
     val categoryList = mutableListOf<String>()
+
+    var mGoogleMap: GoogleMap? = null
+    var mLocationRequest: LocationRequest? = null
+    var mLastLocation: Location? = null
+    var mCurrLocationMarker: Marker? = null
+    var mFusedLocationClient: FusedLocationProviderClient? = null
 
     @Inject
     @field:SemiBold
@@ -98,13 +119,17 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         bottomSheetBehavior = BottomSheetBehavior.from(eventBottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        supportFragmentManager.beginTransaction().replace(R.id.container, eventsFragment).commit()
+        fragmentManager.beginTransaction().replace(R.id.container, eventsFragment).commit()
         heading.typeface = semiBold
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mapFragment.getMapAsync(this)
 
         Thread {
             val options = BitmapFactory.Options()
             options.inSampleSize = 2
             backgroundArt = BitmapFactory.decodeResource(resources, R.drawable.background_art)
+
 
             eventBottomSheet.post {
                 eventBottomSheet.backgroundDrawable = getBottomSheetBackground(Color.BLACK)
@@ -179,7 +204,10 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                             eventsFragment.setViewPagerAdapter(filterE, it)
                         }
                     }
-                    2 -> {}
+                    2 -> {
+                        heading.text = "MAP"
+                        addFragment(mapFragment)
+                    }
                     3 -> {
                         addFragment(eventsFragment)
                         val filterE = FilterEvents()
@@ -300,6 +328,86 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        try {
+            mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap?) {
+        mGoogleMap = googleMap
+        mGoogleMap?.setMapType(GoogleMap.MAP_TYPE_HYBRID)
+
+        mLocationRequest = LocationRequest()
+        mLocationRequest?.setInterval(120000) // two minute interval
+        mLocationRequest?.setFastestInterval(120000)
+        mLocationRequest?.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+                mGoogleMap?.setMyLocationEnabled(true)
+            } else {
+                //Request Location Permission
+                checkLocationPermission()
+            }
+        } else {
+            mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+            mGoogleMap?.setMyLocationEnabled(true)
+        }
+
+//        LatLng me=new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
+        val gymg = LatLng(28.359211, 75.590495)
+        val medc =  LatLng(28.357417, 75.591219)
+        val srground = LatLng(28.365923,75.587759)
+        val anc = LatLng(28.360346, 75.589632)
+        val sac = LatLng(28.360710, 75.585639)
+        val fd3 = LatLng(28.363988, 75.586274)
+        val clocktower = LatLng(28.363906, 75.586980)
+        val fd2 = LatLng(28.364059, 75.587873)
+        val uco = LatLng(28.363257, 75.590715)
+        val icici = LatLng(28.357139, 75.590436)
+        val axis = LatLng(28.361605, 75.585046)
+        val fk = LatLng(28.361076, 75.585457)
+        val ltc = LatLng(28.365056, 75.590092)
+        val nab = LatLng(28.362228, 75.587346)
+        val swimmingPool = LatLng(28.3607699,75.5913962)
+
+
+        val cameraPosition = CameraPosition.Builder().
+                target(clocktower).
+                tilt(60f).
+                zoom(17f).
+                bearing(0f).
+                build()
+
+        googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+        googleMap?.addMarker(MarkerOptions().position(anc).title("ANC").snippet("All Night Canteen"))
+        googleMap?.addMarker(MarkerOptions().position(sac).title("SAC").snippet("Student Activity Center"))
+        googleMap?.addMarker(MarkerOptions().position(fd3).title("FD3").snippet("Faculty Division-III(31xx-32xx)"))
+        googleMap?.addMarker(MarkerOptions().position(clocktower).title("Clock Tower").snippet("Auditorium"))
+        googleMap?.addMarker(MarkerOptions().position(fd2).title("FD2").snippet("Faculty Division-II(21xx-22xx)"))
+        googleMap?.addMarker(MarkerOptions().position(uco).title("UCO Bank ATM"))
+        googleMap?.addMarker(MarkerOptions().position(icici).title("ICICI ATM"))
+        googleMap?.addMarker(MarkerOptions().position(axis).title("AXIS Bank ATM"))
+        googleMap?.addMarker(MarkerOptions().position(fk).title("FoodKing").snippet("Restaurant"))
+        googleMap?.addMarker(MarkerOptions().position(ltc).title("LTC").snippet("Lecture Theater Complex(510x)"))
+        googleMap?.addMarker(MarkerOptions().position(nab).title("NAB").snippet("New Academic Block(60xx-61xx)"))
+        googleMap?.addMarker(MarkerOptions().position(gymg).title("GYMG").snippet("Gym Grounds"))
+        googleMap?.addMarker(MarkerOptions().position(medc).title("MedC").snippet("Medical Center"))
+        googleMap?.addMarker(MarkerOptions().position(srground).title("SR Grounds").snippet("SR Bhawan Grounds"))
+        googleMap?.addMarker(MarkerOptions().position(swimmingPool).title("Swimming Pool").snippet("Bits Swimming Pool"))
+//        mMap.addMarker(new MarkerOptions().position(me).title("You are here!").snippet("Consider yourself located"));
+//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap?.isBuildingsEnabled = true
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mainPresenter.onDetach()
@@ -391,7 +499,99 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     }
 
     fun addFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+    }
+
+    val MY_PERMISSIONS_REQUEST_LOCATION = 99
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
+                            //Prompt the user once explanation has been shown
+                            ActivityCompat.requestPermissions(this@MainActivity,
+                                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                                    MY_PERMISSIONS_REQUEST_LOCATION)
+                        })
+                        .create()
+                        .show()
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                        MY_PERMISSIONS_REQUEST_LOCATION)
+            }
+        }
+    }
+
+    var mLocationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            for (location in locationResult!!.locations) {
+                Log.i("MapsActivity", "Location: " + location.latitude + " " + location.longitude)
+                mLastLocation = location
+
+                mCurrLocationMarker?.remove()
+
+                //Place current location marker
+                val latLng = LatLng(location.latitude, location.longitude)
+                val markerOptions = MarkerOptions()
+                markerOptions.position(latLng)
+                markerOptions.title("Current Position")
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                mCurrLocationMarker = mGoogleMap?.addMarker(markerOptions)
+
+                //move map camera
+                val cameraPosition = CameraPosition.Builder().
+                        target(latLng).
+                        tilt(60f).
+                        zoom(17f).
+                        bearing(0f).
+                        build()
+
+                mGoogleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            }
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_LOCATION -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                        mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+                        mGoogleMap?.setMyLocationEnabled(true)
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
+                }
+                return
+            }
+        }// other 'case' lines to check for other
+        // permissions this app might request
     }
 
 }

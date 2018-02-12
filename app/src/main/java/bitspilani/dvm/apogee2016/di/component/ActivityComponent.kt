@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import bitspilani.dvm.apogee2016.data.DataManager
 import bitspilani.dvm.apogee2016.di.*
 import bitspilani.dvm.apogee2016.di.module.ActivityModule
+import bitspilani.dvm.apogee2016.ui.login.LoginActivity
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
 import bitspilani.dvm.apogee2016.ui.splash.SplashActivity
 import dagger.Component
@@ -14,7 +15,7 @@ import dagger.Component
  */
 
 @PerActivity
-@Component(modules = [ActivityModule::class])
+@Component(dependencies = [ApplicationComponent::class], modules = [ActivityModule::class])
 interface ActivityComponent {
 
     @ActivityContext fun getContext(): Context
@@ -27,4 +28,5 @@ interface ActivityComponent {
 
     fun inject(splashActivity: SplashActivity)
     fun inject(mainActivity: MainActivity)
+    fun inject(loginActivity: LoginActivity)
 }

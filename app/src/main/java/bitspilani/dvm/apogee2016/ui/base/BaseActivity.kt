@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import bitspilani.dvm.apogee2016.App
 import bitspilani.dvm.apogee2016.di.component.ActivityComponent
 import bitspilani.dvm.apogee2016.di.component.DaggerActivityComponent
 import bitspilani.dvm.apogee2016.di.module.ActivityModule
@@ -23,6 +24,7 @@ abstract class BaseActivity : AppCompatActivity(), MvpView {
 
         mActivityComponent = DaggerActivityComponent.builder()
                 .activityModule(ActivityModule(this))
+                .applicationComponent((applicationContext as App).getApplicationComponent())
                 .build()
     }
 

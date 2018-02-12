@@ -1,9 +1,13 @@
 package bitspilani.dvm.apogee2016.ui.base
 
+import android.app.Fragment
 import android.content.Context
-import android.support.v4.app.Fragment
 import bitspilani.dvm.apogee2016.di.component.DaggerFragmentComponent
 import bitspilani.dvm.apogee2016.di.component.FragmentComponent
+
+
+
+
 
 /**
  * Created by Vaibhav on 24-01-2018.
@@ -35,4 +39,6 @@ abstract class BaseFragment : Fragment(), MvpView {
     }
 
     fun getFragmentComponent() = mFragmentComponent
+
+
 }

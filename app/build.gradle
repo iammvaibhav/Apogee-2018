@@ -43,7 +43,7 @@ dependencies {
 
     //Dagger2
     implementation "com.google.dagger:dagger:$rootProject.dagger2Version"
-    implementation 'com.google.firebase:firebase-database:11.0.4'
+    implementation 'com.google.firebase:firebase-database:11.8.0'
     kapt "com.google.dagger:dagger-compiler:$rootProject.dagger2Version"
 
     // Anko
@@ -54,6 +54,14 @@ dependencies {
 
     // Shine Button
     implementation "com.sackcentury:shinebutton:$rootProject.shineButtonVersion"
+
+    implementation 'com.google.android.gms:play-services-auth:11.8.0'
+
+    implementation 'com.amitshekhar.android:android-networking:1.0.1'
+
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
 
     debugCompile 'com.amitshekhar.android:debug-db:1.0.2'
 

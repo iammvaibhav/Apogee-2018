@@ -4,6 +4,7 @@ import bitspilani.dvm.apogee2016.data.firebase.AppFirebaseHelper
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.data.prefs.AppPreferencesHelper
+import bitspilani.dvm.apogee2016.data.prefs.model.CurrentUser
 import bitspilani.dvm.apogee2016.di.PerActivity
 import javax.inject.Inject
 
@@ -38,5 +39,85 @@ class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pr
 
     override fun getCategoryList(exec: (List<String>) -> Unit) {
         firebase.getCategoryList(exec)
+    }
+
+    override fun setUserLoggedIn(loggedIn: Boolean) {
+        pref.setUserLoggedIn(true)
+    }
+
+    override fun getUserLoggedIn(): Boolean {
+        return pref.getUserLoggedIn()
+    }
+
+    override fun setCurrentUserId(id: String) {
+        pref.setCurrentUserId(id)
+    }
+
+    override fun getCurrentUserId(): String {
+        return pref.getCurrentUserId()
+    }
+
+    override fun setCurrentUserUsername(username: String) {
+        pref.setCurrentUserUsername(username)
+    }
+
+    override fun getCurrentUserUsername(): String {
+        return pref.getCurrentUserUsername()
+    }
+
+    override fun setCurrentUserPassword(password: String) {
+        pref.setCurrentUserPassword(password)
+    }
+
+    override fun getCurrentUserPassword(): String {
+        return pref.getCurrentUserPassword()
+    }
+
+    override fun setCurrentUserName(name: String) {
+        pref.setCurrentUserName(name)
+    }
+
+    override fun getCurrentUserName(): String {
+        return pref.getCurrentUserName()
+    }
+
+    override fun setCurrentUserEmail(email: String) {
+        pref.setCurrentUserEmail(email)
+    }
+
+    override fun getCurrentUserEmail(): String {
+        return pref.getCurrentUserEmail()
+    }
+
+    override fun setCurrentUserProfileURL(url: String) {
+        pref.setCurrentUserProfileURL(url)
+    }
+
+    override fun getCurrentUserProfileURL(): String {
+        return pref.getCurrentUserProfileURL()
+    }
+
+    override fun setCurrentUserAccessToken(token: String) {
+        pref.setCurrentUserAccessToken(token)
+    }
+
+    override fun getCurrentUserAccessToken(): String {
+        return pref.getCurrentUserAccessToken()
+    }
+
+    override fun setCurrentUser(currentUser: CurrentUser) {
+        setUserLoggedIn(currentUser.loggedIn)
+        setCurrentUserId(currentUser.userId)
+        setCurrentUserUsername(currentUser.username)
+        setCurrentUserPassword(currentUser.password)
+        setCurrentUserName(currentUser.name)
+        setCurrentUserEmail(currentUser.email)
+        setCurrentUserProfileURL(currentUser.profileURL)
+        setCurrentUserAccessToken(currentUser.accessToken)
+    }
+
+    override fun getCurrentUser(): CurrentUser {
+        return CurrentUser(getUserLoggedIn(), getCurrentUserId(), getCurrentUserUsername(), getCurrentUserPassword(),
+                getCurrentUserName(), getCurrentUserEmail(), getCurrentUserProfileURL(), getCurrentUserAccessToken())
     }
 }
