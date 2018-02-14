@@ -1,5 +1,6 @@
 package bitspilani.dvm.apogee2016.ui.bottombar
 
+import android.animation.ArgbEvaluator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -11,6 +12,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import bitspilani.dvm.apogee2016.R
+import bitspilani.dvm.apogee2016.ui.main.CC
 
 /**
  * Created by Vaibhav on 03-02-2018.
@@ -23,6 +25,8 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
     private lateinit var colorInfo: Array<BarColorInfo>
     private val barHeight = resources.getDimension(R.dimen.BIBBarHeight).toInt()
     private val shadowHeight = resources.getDimension(R.dimen.BIBShadowHeight).toInt()
+    private val evaluator = ArgbEvaluator()
+    var currPos = 1
 
     private val baseRect = Rect()
     private val shadowRect = Rect()
@@ -174,18 +178,23 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
     }
 
     override fun onPageScrollStateChanged(state: Int) {
+
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val evaluated = evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int
+        centerIconBackgroundGradientArray[0] = evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorA, CC.getScreenColorFor(position + 1).colorA) as Int
+        centerIconBackgroundGradientArray[1] = evaluated
+        shadowGradientArray[0] = evaluated
+        centerIconDrawableBackground.colors = centerIconBackgroundGradientArray
+        shadowDrawable.colors = shadowGradientArray
+        DrawableCompat.setTint(icons[currPos]!!, evaluated)
+        textPaint[currPos].color = evaluated
+        invalidate()
     }
 
     override fun onPageSelected(position: Int) {
-        centerIconBackgroundGradientArray[0] = colorInfo[position].colorA
-        centerIconBackgroundGradientArray[1] = colorInfo[position].colorB
-        centerIconDrawableBackground.orientation = colorInfo[position].orientation
-        shadowGradientArray[0] = colorInfo[position].shadowColor
-        invalidate()
+
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -197,12 +206,16 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
             touchBoxes.forEachIndexed { index, rect ->
                 if (rect.contains(event.x.toInt(), event.y.toInt())) {
                     icons.forEach { DrawableCompat.setTint(it!!, textColorUnselected) }
-                    DrawableCompat.setTint(icons[index]!!, textColorSelected)
-
                     textPaint.forEach { it.color = textColorUnselected }
-                    textPaint[index].color = textColorSelected
+                    DrawableCompat.setTint(icons[currPos]!!, CC.getScreenColorFor(0).colorB)
+                    textPaint[currPos].color = CC.getScreenColorFor(0).colorB
+                    centerIconBackgroundGradientArray[0] = CC.getScreenColorFor(0).colorA
+                    centerIconBackgroundGradientArray[1] = CC.getScreenColorFor(0).colorB
+                    shadowGradientArray[0] = CC.getScreenColorFor(0).colorB
+                    centerIconDrawableBackground.colors = centerIconBackgroundGradientArray
+                    shadowDrawable.colors = shadowGradientArray
                     invalidate()
-
+                    currPos = index
                     bottomInteractiveBarOnClickListener?.onClickItem(index)
                     return true
                 }

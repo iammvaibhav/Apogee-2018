@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Fragment
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
@@ -34,6 +35,9 @@ import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventsFragment
+import bitspilani.dvm.apogee2016.ui.informatives.*
+import bitspilani.dvm.apogee2016.ui.login.LoginActivity
+import bitspilani.dvm.apogee2016.ui.profile.ProfileFragment
 import bitspilani.dvm.apogee2016.utils.PathParser
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -46,7 +50,6 @@ import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen.*
 import kotlinx.android.synthetic.main.main_screen_main_content.*
 import kotlinx.android.synthetic.main.right_drawer.*
-import org.jetbrains.anko.backgroundDrawable
 import javax.inject.Inject
 
 /**
@@ -54,12 +57,6 @@ import javax.inject.Inject
  */
 
 class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventClickListener, OnMapReadyCallback {
-
-    class ScreenColor(colorA: String, colorB: String, colorC: String) {
-        val colorA = Color.parseColor(colorA)
-        val colorB = Color.parseColor(colorB)
-        val colorC = Color.parseColor(colorC)
-    }
 
     @Inject
     lateinit var mainPresenter: MainPresenter<MainMvpView>
@@ -90,7 +87,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     lateinit var recyclerView: RecyclerView
 
     val eventsFragment by lazy { EventsFragment() }
-    val mapFragment by lazy { MapFragment() }
+    val profileFragment by lazy { ProfileFragment() }
 
     var filterEvents = FilterEvents()
     var filterEventsCurrSession = FilterEvents()
@@ -123,7 +120,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         heading.typeface = semiBold
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        mapFragment.getMapAsync(this)
+
 
         Thread {
             val options = BitmapFactory.Options()
@@ -132,7 +129,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
 
             eventBottomSheet.post {
-                eventBottomSheet.backgroundDrawable = getBottomSheetBackground(Color.BLACK)
+                eventBottomSheet.background = getBottomSheetBackground(Color.BLACK)
             }
 
             /*leftDrawer.post {
@@ -195,8 +192,15 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
             override fun onClickItem(position: Int) {
                 when(position) {
-                    0 -> {}
+                    0 -> {
+                        setHeading("profile")
+                        if (!mainPresenter.getDataManager().getUserLoggedIn())
+                        startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), 69)
+                        else
+                            addFragment(profileFragment)
+                    }
                     1 -> {
+                        setHeading("events")
                         addFragment(eventsFragment)
                         val filterE = FilterEvents()
                         mainPresenter.getDataManager().getEvents(filterE) {
@@ -205,10 +209,13 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                         }
                     }
                     2 -> {
-                        heading.text = "MAP"
+                        val mapFragment = MapFragment()
+                        mapFragment.getMapAsync(this@MainActivity)
+                        setHeading("profile")
                         addFragment(mapFragment)
                     }
                     3 -> {
+                        setHeading("ongoing")
                         addFragment(eventsFragment)
                         val filterE = FilterEvents()
                         filterE.filterByOngoing = true
@@ -297,6 +304,38 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             R.id.back -> {
                 eventBottomSheet.removeAllViews()
                 eventBottomSheet.addView(bottomSheetFilterView)
+            }
+            R.id.about -> {
+                setHeading("About")
+                addFragment(AboutFragment())
+            }
+            R.id.contactUs -> {
+                setHeading("Contact Us")
+                addFragment(ContactFragment())
+            }
+            R.id.sponsors -> {
+                setHeading("Sponsors")
+                addFragment(SponsorsFragment())
+            }
+            R.id.profShows -> {
+                setHeading("Prof Shows")
+                addFragment(eventsFragment)
+            }
+            R.id.schedule -> {
+                setHeading("events")
+                addFragment(eventsFragment)
+            }
+            R.id.notifications -> {
+                setHeading("notifications")
+                addFragment(NotificationsFragment())
+            }
+            R.id.emergency -> {
+                setHeading("emergency")
+                addFragment(EmergencyFragment())
+            }
+            R.id.developers -> {
+                setHeading("developers")
+                addFragment(DevelopersFragment())
             }
         }
     }
@@ -563,6 +602,15 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             }
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 69) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK)
+                addFragment(profileFragment)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,

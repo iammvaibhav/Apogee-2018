@@ -1,11 +1,11 @@
 package bitspilani.dvm.apogee2016.ui.splash
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 /**
@@ -31,10 +31,10 @@ class SplashActivity : BaseActivity(), SplashMvpView {
     }
 
     override fun openOnboardingActivity() {
-        toast("Open onboarding activity")
+        Toast.makeText(this, "onboarding", Toast.LENGTH_SHORT).show()
     }
 
     override fun openMainActivity() {
-        startActivity<MainActivity>()
+        startActivity(Intent(this, MainActivity::class.java))
     }
 }

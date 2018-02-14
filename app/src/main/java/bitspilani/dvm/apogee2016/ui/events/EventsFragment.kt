@@ -1,7 +1,9 @@
 package bitspilani.dvm.apogee2016.ui.events
 
+import android.animation.ArgbEvaluator
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ import bitspilani.dvm.apogee2016.di.Regular
 import bitspilani.dvm.apogee2016.ui.base.BaseFragment
 import bitspilani.dvm.apogee2016.ui.main.CC
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
+import kotlinx.android.synthetic.main.main_screen_main_content.*
 import javax.inject.Inject
 
 /**
@@ -33,6 +36,7 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     private lateinit var prev: ImageView
     private lateinit var heading: TextView
     lateinit var eventClickListener: EventClickListener
+    val evaluator = ArgbEvaluator()
 
 
     @Inject
@@ -45,7 +49,6 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (getBaseActivity() as MainActivity).setHeading("EVENTS")
         eventClickListener = (getBaseActivity() as MainActivity)
         getFragmentComponent().inject(this)
     }
@@ -54,6 +57,7 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         val view = inflater.inflate(R.layout.events_fragment, container, false)
         viewPager = view.findViewById(R.id.viewPager)
         viewPager.addOnPageChangeListener(this)
+        viewPager.addOnPageChangeListener((activity as MainActivity).bib)
         next = view.findViewById(R.id.next)
         prev = view.findViewById(R.id.prev)
         next.setOnClickListener(this)
@@ -93,6 +97,14 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         heading.setTextColor(CC.getScreenColorFor(0).colorB)
         next.setColorFilter(CC.getScreenColorFor(0).colorB)
         prev.setColorFilter(CC.getScreenColorFor(0).colorB)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                activity.window.statusBarColor = CC.getScreenColorFor(0).colorC
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
     }
 
     override fun onPageScrollStateChanged(state: Int) {
@@ -100,7 +112,16 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                activity.window.statusBarColor = evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorC, CC.getScreenColorFor(position + 1).colorC) as Int
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+            heading.setTextColor(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
+            next.setColorFilter(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
+            prev.setColorFilter(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
+        }
     }
 
     override fun onPageSelected(position: Int) {

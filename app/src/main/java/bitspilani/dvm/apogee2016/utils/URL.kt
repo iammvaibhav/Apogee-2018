@@ -6,9 +6,10 @@ package bitspilani.dvm.apogee2016.utils
 
 object URL {
 
-    private const val server = "http://172.17.38.252:8000"
+    private const val server = "http://192.168.43.14:8000"
     private const val apogee = "https://bits-apogee.org/2018"
-    const val API_TOKEN = "$server/shop/bt"
-
+    const val GET_USERNAME = "$server/shop/bt"
+    const val API_TOKEN = "$server/shop/api_token"
+    const val GET_PROFILE = "$server/shop/get_profile"
 
 }

@@ -3,7 +3,6 @@ package bitspilani.dvm.apogee2016.data.prefs
 import android.content.Context
 import bitspilani.dvm.apogee2016.di.ApplicationContext
 import bitspilani.dvm.apogee2016.di.PerActivity
-import org.jetbrains.anko.defaultSharedPreferences
 import javax.inject.Inject
 
 
@@ -14,7 +13,7 @@ import javax.inject.Inject
 @PerActivity
 class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Context): PreferencesHelper {
 
-    private val sharedPreferences = context.defaultSharedPreferences
+    private val sharedPreferences = context.getSharedPreferences("default", Context.MODE_PRIVATE)
 
     private val PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE"
     private val PREF_KEY_CURRENT_USER_ID = "PREF_KEY_CURRENT_USER_ID"
@@ -24,6 +23,10 @@ class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Cont
     private val PREF_KEY_CURRENT_USER_EMAIL = "PREF_KEY_CURRENT_USER_EMAIL"
     private val PREF_KEY_CURRENT_USER_PROFILE_PIC_URL = "PREF_KEY_CURRENT_USER_PROFILE_PIC_URL"
     private val PREF_KEY_ACCESS_TOKEN = "PREF_KEY_ACCESS_TOKEN"
+    private val PREF_KEY_IS_BITSIAN = "PREF_KEY_IS_BITSIAN"
+    private val PREF_KEY_SIGNED_EVENTS = "PREF_KEY_SIGNED_EVENTS"
+    private val PREF_KEY_QR_CODE = "PREF_KEY_QR_CODE"
+
 
     private val PREF_KEY_IS_ONBOARDING_REQUIRED = "PREF_KEY_IS_ONBOARDING_REQUIRED"
     private val PREF_KEY_FAVOURITE_LIST = "PREF_KEY_FAVOURITE_LIST"
@@ -127,5 +130,29 @@ class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Cont
 
     override fun getCurrentUserAccessToken(): String {
         return sharedPreferences.getString(PREF_KEY_ACCESS_TOKEN, "")
+    }
+
+    override fun setIsBitsian(isBitsian: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_KEY_IS_BITSIAN, isBitsian).apply()
+    }
+
+    override fun getIsBitsian(): Boolean {
+        return sharedPreferences.getBoolean(PREF_KEY_IS_BITSIAN, true)
+    }
+
+    override fun setSignedEvents(signedEvents: String) {
+        sharedPreferences.edit().putString(PREF_KEY_SIGNED_EVENTS, signedEvents).apply()
+    }
+
+    override fun getSignedEvents(): String {
+        return sharedPreferences.getString(PREF_KEY_SIGNED_EVENTS, "")
+    }
+
+    override fun setQrCode(signedEvents: String) {
+        sharedPreferences.edit().putString(PREF_KEY_QR_CODE, signedEvents).apply()
+    }
+
+    override fun getQrCode(): String {
+        return sharedPreferences.getString(PREF_KEY_QR_CODE, "")
     }
 }

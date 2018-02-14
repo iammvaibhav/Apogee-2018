@@ -30,5 +30,11 @@ interface PreferencesHelper {
     fun getCurrentUserProfileURL(): String
     fun setCurrentUserAccessToken(token: String)
     fun getCurrentUserAccessToken(): String
+    fun setIsBitsian(isBitsian: Boolean)
+    fun getIsBitsian(): Boolean
+    fun setSignedEvents(signedEvents: String)
+    fun getSignedEvents(): String
+    fun setQrCode(qr: String)
+    fun getQrCode(): String
 
 }

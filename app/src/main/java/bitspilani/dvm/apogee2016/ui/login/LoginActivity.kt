@@ -1,5 +1,6 @@
 package bitspilani.dvm.apogee2016.ui.login
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -44,6 +45,7 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         getActivityComponent().inject(this)
         loginPresenter.onAttach(this)
 
+        Log.e("fsd", "oncreate, ${this.hashCode()}")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = Color.parseColor("#FF0077")
 
@@ -53,24 +55,41 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         outstationParticipantLogin.setOnClickListener(this)
 
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("261999725665-0od42qs76fco9d4d5pf9pe97e4q97jv4.apps.googleusercontent.com")
+                .requestIdToken("975053221879-9dvv66a20imkc2f460pcepa41drds9nt.apps.googleusercontent.com")
                 .requestEmail()
                 .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
 
-        // Get last signed in account
+        /*// Get last signed in account
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
         // If it is null, then user is not signed in. If not, he is already signed in
         if (account != null)
-            signedIn(account)
+            signedIn(account)*/
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("sdf","onPause ${this.hashCode()}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("onstop", "fdsf ${this.hashCode()}")
     }
 
     override fun onClick(v: View) {
         when(v.id) {
-            R.id.googleSignIn -> signIn()
+            R.id.googleSignIn -> {
+                progress.visibility = View.VISIBLE
+                if (GoogleSignIn.getLastSignedInAccount(this) != null)
+                    googleSignInClient.signOut().addOnCompleteListener {
+                        signIn()
+                    }
+                else signIn()
+            }
             R.id.switchButton -> {
                 if (switchButton.text == "outstation participant") {
                     switchButton.text = "bits student"
@@ -85,13 +104,61 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
                 }
             }
             R.id.outstationParticipantLogin -> {
+                progress.visibility = View.VISIBLE
                 Toast.makeText(this, "Outstii", Toast.LENGTH_SHORT).show()
+
+                val credentials = JSONObject()
+                credentials.put("username", input_email.text)
+                credentials.put("password", input_password.text)
+                AndroidNetworking.post(URL.API_TOKEN)
+                        .addJSONObjectBody(credentials)
+                        .build()
+                        .getAsJSONObject(object : JSONObjectRequestListener {
+                            override fun onResponse(response: JSONObject) {
+                                if (response.has("token")) {
+                                    loginPresenter.getDataManager().setUserLoggedIn(true)
+                                    loginPresenter.getDataManager().setCurrentUserUsername(credentials.getString("username"))
+                                    loginPresenter.getDataManager().setCurrentUserPassword(credentials.getString("password"))
+                                    loginPresenter.getDataManager().setIsBitsian(false)
+
+                                    val intent = Intent()
+                                    intent.putExtra("username", credentials.getString("username"))
+                                    intent.putExtra("password", credentials.getString("password"))
+                                    progress.visibility = View.INVISIBLE
+                                    setResult(Activity.RESULT_OK, intent)
+                                    finish()
+                                    Log.e("finished", "")
+                                }else {
+                                    progress.visibility = View.INVISIBLE
+                                    Log.e("fdsf", "error")
+                                    onError("Invalid Login!")
+                                }
+                            }
+
+                            override fun onError(anError: ANError?) {
+                                progress.visibility = View.INVISIBLE
+                                onError("Invalid Login!")
+                                Log.e("fdsf", "error2")
+                            }
+                        })
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e("ads", "ondestroy ${this.hashCode()}")
+        loginPresenter.onDetach()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("dsf", "onresume ${this.hashCode()}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.e("sdf", "onstart ${this.hashCode()}")
     }
 
     private fun signIn() {
@@ -99,24 +166,39 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
+
     private fun signedIn(account: GoogleSignInAccount) {
-        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
-        Log.e("profilePic", account.photoUrl?.toString())
+        Log.e("token", account.idToken)
 
         val obj = JSONObject()
         obj.put("id_token", account.idToken)
-//        Log.e("id_token", account.idToken)
 
-        AndroidNetworking.post(URL.API_TOKEN)
+        AndroidNetworking.post(URL.GET_USERNAME)
                 .addJSONObjectBody(obj)
                 .build()
                 .getAsJSONObject(object : JSONObjectRequestListener {
                     override fun onResponse(response: JSONObject) {
-                        Log.e("response", response.toString())
+                        progress.visibility = View.INVISIBLE
+                        if (response.has("username") && response.has("password")) {
+                            loginPresenter.getDataManager().setUserLoggedIn(true)
+                            loginPresenter.getDataManager().setCurrentUserUsername(response.getString("username"))
+                            loginPresenter.getDataManager().setCurrentUserPassword(response.getString("password"))
+                            loginPresenter.getDataManager().setIsBitsian(true)
+                            val intent = Intent()
+                            Log.e("hio", "i ma here")
+                            intent.putExtra("username", response.getString("username"))
+                            intent.putExtra("password", response.getString("password"))
+                            setResult(Activity.RESULT_OK, intent)
+                            finish()
+                            return
+                        }else {
+                            onError("Invalid Login. Make sure you are using Bitsmail")
+                        }
                     }
 
                     override fun onError(anError: ANError?) {
-                        Log.e("Error!", "eee")
+                        progress.visibility = View.INVISIBLE
+                        onError("Invalid Login. Make sure you are using Bitsmail")
                     }
                 })
     }
@@ -140,6 +222,8 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.e("Error", "signInResult:failed code=" + e.statusCode)
+            Log.e("error", e.message ?: "")
+            Log.e("e", e.localizedMessage ?: "")
             Snackbar.make(root, "Error! Please try again", Snackbar.LENGTH_LONG).show()
         }
 

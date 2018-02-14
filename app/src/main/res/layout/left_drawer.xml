@@ -89,39 +89,39 @@
         app:layout_constraintTop_toBottomOf="@+id/profShows" />
 
     <TextView
-        android:id="@+id/workshops"
+        android:id="@+id/notifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
         android:layout_marginTop="8dp"
-        android:text="WORKSHOPS"
+        android:text="NOTIFICATIONS"
         android:textColor="#fff"
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/schedule" />
 
     <TextView
-        android:id="@+id/archive"
+        android:id="@+id/developers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="44dp"
         android:layout_marginStart="36dp"
-        android:text="ARCHIVE"
+        android:text="DEVELOPERS"
         android:textColor="#fff"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/developers"
+        android:id="@+id/emergency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="36dp"
-        android:text="DEVELOPERS"
+        android:text="EMERGENCY"
         android:textColor="#fff"
         android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/archive"
+        app:layout_constraintBottom_toTopOf="@+id/developers"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView

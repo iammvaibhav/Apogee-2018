@@ -42,7 +42,7 @@ class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pr
     }
 
     override fun setUserLoggedIn(loggedIn: Boolean) {
-        pref.setUserLoggedIn(true)
+        pref.setUserLoggedIn(loggedIn)
     }
 
     override fun getUserLoggedIn(): Boolean {
@@ -119,5 +119,29 @@ class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pr
     override fun getCurrentUser(): CurrentUser {
         return CurrentUser(getUserLoggedIn(), getCurrentUserId(), getCurrentUserUsername(), getCurrentUserPassword(),
                 getCurrentUserName(), getCurrentUserEmail(), getCurrentUserProfileURL(), getCurrentUserAccessToken())
+    }
+
+    override fun setIsBitsian(isBitsian: Boolean) {
+        pref.setIsBitsian(isBitsian)
+    }
+
+    override fun getIsBitsian(): Boolean {
+        return pref.getIsBitsian()
+    }
+
+    override fun setSignedEvents(signedEvents: String) {
+        pref.setSignedEvents(signedEvents)
+    }
+
+    override fun getSignedEvents(): String {
+        return pref.getSignedEvents()
+    }
+
+    override fun setQrCode(qr: String) {
+        pref.setQrCode(qr)
+    }
+
+    override fun getQrCode(): String {
+        return pref.getQrCode()
     }
 }
