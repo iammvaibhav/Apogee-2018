@@ -9,14 +9,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import bitspilani.dvm.apogee2016.R
+import bitspilani.dvm.apogee2016.data.DataManager
 import bitspilani.dvm.apogee2016.databinding.NotificationsItemBinding
 import bitspilani.dvm.apogee2016.di.SemiBold
 import bitspilani.dvm.apogee2016.ui.base.BaseFragment
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-data class NotificationData(val title: String, val body: String, val timeRecieved: String, val date: Date)
+data class NotificationData(val title: String, val body: String, val timeReceived: String, val date: Date) {
+
+    override fun toString(): String {
+        return "$title!`$body!`$timeReceived!`${format.format(date)}"
+    }
+
+    companion object {
+        val format = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+        fun fromString(notificationData: String): NotificationData {
+            val x = notificationData.split("!`")
+            return NotificationData(x[0], x[1], x[2], format.parse(x[3]))
+        }
+    }
+}
 
 class NotificationViewHolder(val binding: NotificationsItemBinding) : RecyclerView.ViewHolder(binding.root){
     fun bind(data: NotificationData, typeface: Typeface){
@@ -25,15 +40,15 @@ class NotificationViewHolder(val binding: NotificationsItemBinding) : RecyclerVi
     }
 }
 
-class NotificationsAdapter(val typeface: Typeface) : RecyclerView.Adapter<NotificationViewHolder>(){
+class NotificationsAdapter(val typeface: Typeface, val notifications: List<NotificationData>) : RecyclerView.Adapter<NotificationViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
         return NotificationViewHolder(NotificationsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun getItemCount() = TODO("GlobalData.notificationsData.size")
+    override fun getItemCount() = notifications.size
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        TODO("holder.bind(GlobalData.notificationsData[position], typeface)")
+        holder.bind(notifications[position], typeface)
     }
 }
 
@@ -42,6 +57,9 @@ class NotificationsFragment : BaseFragment(){
     @Inject
     @field:SemiBold
     lateinit var typeface: Typeface
+
+    @Inject
+    lateinit var dataManager: DataManager
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,13 +71,9 @@ class NotificationsFragment : BaseFragment(){
         (getBaseActivity() as MainActivity).setHeading("Notifications")
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        try {
-            TODO("GlobalData.notificationsData = GlobalData.tinyDb.getObject(\"notificationsData\", GlobalData.notificationsDataType)")
-        }catch (e: NullPointerException){
-            e.printStackTrace()
-        }
+        val notifications = dataManager.getNotifications()
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = NotificationsAdapter(typeface)
+        recyclerView.adapter = NotificationsAdapter(typeface, notifications)
         return view
     }
 }

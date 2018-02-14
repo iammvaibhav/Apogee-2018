@@ -6,6 +6,7 @@ import android.widget.Toast
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
+import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 
 /**
@@ -23,6 +24,7 @@ class SplashActivity : BaseActivity(), SplashMvpView {
 
         getActivityComponent().inject(this)
         splashPresenter.onAttach(this)
+        FirebaseMessaging.getInstance().subscribeToTopic("all")
     }
 
     override fun onDestroy() {

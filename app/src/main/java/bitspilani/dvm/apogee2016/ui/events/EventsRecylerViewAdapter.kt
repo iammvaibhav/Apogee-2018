@@ -1,6 +1,12 @@
 package bitspilani.dvm.apogee2016.ui.events
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
+import android.os.SystemClock
+import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +15,13 @@ import android.widget.TextView
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.data.DataManager
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
+import bitspilani.dvm.apogee2016.notification.NotificationPublisher
 import bitspilani.dvm.apogee2016.ui.main.CC
+import bitspilani.dvm.apogee2016.ui.splash.SplashActivity
 import com.sackcentury.shinebuttonlib.ShineButton
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by Vaibhav on 06-02-2018.
@@ -69,10 +79,14 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
         holder.markFavourite.isChecked = dataManager.isFavourite(event.id)
 
         holder.markFavourite.setOnCheckStateChangeListener { view, checked ->
-            if (checked)
+            if (checked) {
                 dataManager.addAsFavourite(event.id)
-            else
+                scheduleNotification(holder.itemView.context, event)
+            }
+            else {
                 dataManager.removeAsFavourite(event.id)
+                cancelNotification(holder.itemView.context, event)
+            }
         }
 
         holder.itemView.setOnClickListener {
@@ -88,4 +102,61 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
     }
 
     override fun getItemCount() = eventsData.size
+
+    private fun scheduleNotification(context: Context, event: Event){
+        val data = getPendingIntentAndTime(context, event)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, data.second, data.first)
+    }
+
+    private fun cancelNotification(context: Context, event: Event){
+        val data = getPendingIntentAndTime(context, event)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(data.first)
+    }
+
+    private fun getPendingIntentAndTime(context: Context, event: Event): Pair<PendingIntent, Long>{
+        val contentTitle = "Event Reminder"
+        val shortContentText = "${event.name} is gonna start in 30 min from now."
+        val longContentText = "${event.name} is gonna start in 30 min from now."
+
+        val inFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
+        var date = Date()
+        try {
+            date = inFormat.parse("${event.day}-02-2018 ${event.startTime}")
+        }catch (e: ParseException){
+            e.printStackTrace()
+        }
+
+        val notificationTime = date.time - 30 * 60 * 1000
+        val currTime = System.currentTimeMillis()
+        val delay = notificationTime - currTime
+
+        val notificationBuilder = NotificationCompat.Builder(context)
+                .setContentTitle(contentTitle)
+                .setContentText(shortContentText)
+                .setAutoCancel(true)
+                .setSmallIcon(android.R.drawable.ic_menu_delete)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setStyle(NotificationCompat.BigTextStyle()
+                        .bigText(longContentText))
+
+        val intent = Intent(context, SplashActivity::class.java)
+        intent.action = "${event.id}"
+        intent.putExtra("event", event)
+        val activity = PendingIntent.getActivity(context, event.id, intent, PendingIntent.FLAG_ONE_SHOT)
+        notificationBuilder.setContentIntent(activity)
+
+        val notification = notificationBuilder.build()
+
+        val notificationIntent = Intent(context, NotificationPublisher::class.java)
+        notificationIntent.action = "${event.id}"
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, event.id)
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification)
+        val pendingIntent = PendingIntent.getBroadcast(context, event.id, notificationIntent, PendingIntent.FLAG_ONE_SHOT)
+
+        val futureInMillis = SystemClock.elapsedRealtime() + delay
+
+        return Pair(pendingIntent, futureInMillis)
+    }
 }

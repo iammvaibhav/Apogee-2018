@@ -1,5 +1,7 @@
 package bitspilani.dvm.apogee2016.data.prefs
 
+import bitspilani.dvm.apogee2016.ui.informatives.NotificationData
+
 /**
  * Created by Vaibhav on 24-01-2018.
  */
@@ -36,5 +38,7 @@ interface PreferencesHelper {
     fun getSignedEvents(): String
     fun setQrCode(qr: String)
     fun getQrCode(): String
+    fun putNotification(notificationData: NotificationData)
+    fun getNotifications(): List<NotificationData>
 
 }

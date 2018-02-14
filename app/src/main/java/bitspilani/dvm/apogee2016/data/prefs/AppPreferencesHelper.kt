@@ -3,6 +3,7 @@ package bitspilani.dvm.apogee2016.data.prefs
 import android.content.Context
 import bitspilani.dvm.apogee2016.di.ApplicationContext
 import bitspilani.dvm.apogee2016.di.PerActivity
+import bitspilani.dvm.apogee2016.ui.informatives.NotificationData
 import javax.inject.Inject
 
 
@@ -26,6 +27,7 @@ class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Cont
     private val PREF_KEY_IS_BITSIAN = "PREF_KEY_IS_BITSIAN"
     private val PREF_KEY_SIGNED_EVENTS = "PREF_KEY_SIGNED_EVENTS"
     private val PREF_KEY_QR_CODE = "PREF_KEY_QR_CODE"
+    private val PREF_KEY_NOTIFICATION_DATA = "PREF_KEY_NOTIFICATION_DATA"
 
 
     private val PREF_KEY_IS_ONBOARDING_REQUIRED = "PREF_KEY_IS_ONBOARDING_REQUIRED"
@@ -154,5 +156,17 @@ class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Cont
 
     override fun getQrCode(): String {
         return sharedPreferences.getString(PREF_KEY_QR_CODE, "")
+    }
+
+    override fun putNotification(notificationData: NotificationData) {
+        val list = getStringSet(PREF_KEY_NOTIFICATION_DATA)
+        list.add(notificationData.toString())
+        putStringSet(PREF_KEY_NOTIFICATION_DATA, list)
+    }
+
+    override fun getNotifications(): List<NotificationData> {
+        val notifications = getStringSet(PREF_KEY_NOTIFICATION_DATA).toMutableList().map { NotificationData.fromString(it) }
+        notifications.sortedByDescending { it.date }
+        return notifications
     }
 }

@@ -44,7 +44,7 @@
             android:layout_marginRight="25dp"
             android:background="#ffe14a"
             android:gravity="center_horizontal"
-            android:text="@{data.timeRecieved}"
+            android:text="@{data.timeReceived}"
             android:textColor="#202020"
             android:textSize="14dp" />
 

@@ -7,6 +7,7 @@ import bitspilani.dvm.apogee2016.data.firebase.model.Sponsor
 import bitspilani.dvm.apogee2016.data.prefs.AppPreferencesHelper
 import bitspilani.dvm.apogee2016.data.prefs.model.CurrentUser
 import bitspilani.dvm.apogee2016.di.PerActivity
+import bitspilani.dvm.apogee2016.ui.informatives.NotificationData
 import javax.inject.Inject
 
 /**
@@ -148,5 +149,13 @@ class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pr
 
     override fun getQrCode(): String {
         return pref.getQrCode()
+    }
+
+    override fun putNotification(notificationData: NotificationData) {
+        pref.putNotification(notificationData)
+    }
+
+    override fun getNotifications(): List<NotificationData> {
+        return pref.getNotifications()
     }
 }
