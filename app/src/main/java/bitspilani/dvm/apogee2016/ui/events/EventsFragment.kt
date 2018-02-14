@@ -73,7 +73,7 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         when(v.id) {
             R.id.next -> {
                 val count = viewPager.childCount
-                if (viewPager.currentItem < count - 1)
+                if (viewPager.currentItem < count)
                     viewPager.setCurrentItem(viewPager.currentItem + 1, true)
             }
             R.id.prev -> {

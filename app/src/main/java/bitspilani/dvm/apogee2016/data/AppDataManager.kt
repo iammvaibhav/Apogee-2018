@@ -3,6 +3,7 @@ package bitspilani.dvm.apogee2016.data
 import bitspilani.dvm.apogee2016.data.firebase.AppFirebaseHelper
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
+import bitspilani.dvm.apogee2016.data.firebase.model.Sponsor
 import bitspilani.dvm.apogee2016.data.prefs.AppPreferencesHelper
 import bitspilani.dvm.apogee2016.data.prefs.model.CurrentUser
 import bitspilani.dvm.apogee2016.di.PerActivity
@@ -39,6 +40,10 @@ class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pr
 
     override fun getCategoryList(exec: (List<String>) -> Unit) {
         firebase.getCategoryList(exec)
+    }
+
+    override fun getSponsors(exec: (List<Sponsor>) -> Unit) {
+        firebase.getSponsors(exec)
     }
 
     override fun setUserLoggedIn(loggedIn: Boolean) {

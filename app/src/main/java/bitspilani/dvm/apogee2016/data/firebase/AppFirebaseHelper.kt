@@ -3,6 +3,7 @@ package bitspilani.dvm.apogee2016.data.firebase
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.data.firebase.model.ShowBy
+import bitspilani.dvm.apogee2016.data.firebase.model.Sponsor
 import bitspilani.dvm.apogee2016.data.prefs.AppPreferencesHelper
 import bitspilani.dvm.apogee2016.di.PerActivity
 import com.google.firebase.database.DataSnapshot
@@ -48,7 +49,28 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
                         }
                     }
                 }
+                sortDataList()
                 exec(data)
+            }
+        })
+    }
+
+    override fun getSponsors(exec: (List<Sponsor>) -> Unit) {
+        val reference = FirebaseDatabase.getInstance().getReference("Sponsors")
+
+        val sponsors = mutableListOf<Sponsor>()
+
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError?) { }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (child in snapshot.children) {
+                    val sponsor = child.getValue(Sponsor::class.java)
+                    if (sponsor != null) sponsors.add(sponsor)
+                }
+
+                sponsors.sortBy { it.id }
+                exec(sponsors)
             }
         })
     }
@@ -137,5 +159,12 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
     private fun checkIfNotExcluded(event: Event, filterEvents: FilterEvents): Boolean {
         return !(filterEvents.excludeCategory.contains(event.category) || filterEvents.excludeVenue.contains(event.venue))
     }
+
+    private fun sortDataList() {
+        data.sortBy { it.first }
+        data.forEach { it.second.sortedBy { it.startTime } }
+    }
+
+
 
 }

@@ -116,6 +116,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         bottomSheetBehavior = BottomSheetBehavior.from(eventBottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
+        setHeading("events")
         fragmentManager.beginTransaction().replace(R.id.container, eventsFragment).commit()
         heading.typeface = semiBold
 
@@ -184,6 +185,14 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         options.setOnClickListener(this)
         closeLeft.setOnClickListener(this)
         closeRight.setOnClickListener(this)
+        about.setOnClickListener(this)
+        contactUs.setOnClickListener(this)
+        sponsors.setOnClickListener(this)
+        profShows.setOnClickListener(this)
+        schedule.setOnClickListener(this)
+        notifications.setOnClickListener(this)
+        emergency.setOnClickListener(this)
+        developers.setOnClickListener(this)
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
             override fun onCenterButtonClick() {
@@ -308,34 +317,57 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             R.id.about -> {
                 setHeading("About")
                 addFragment(AboutFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.contactUs -> {
                 setHeading("Contact Us")
                 addFragment(ContactFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.sponsors -> {
                 setHeading("Sponsors")
                 addFragment(SponsorsFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.profShows -> {
                 setHeading("Prof Shows")
                 addFragment(eventsFragment)
+                val filterE = FilterEvents()
+                filterE.showBy = ShowBy.CATEGORY
+                mainPresenter.getDataManager().getCategoryList { val x = it.toMutableList()
+                    x.forEach { if (it.contains("prof show", true)) x.remove(it) }
+                    filterE.excludeCategory.addAll(x)
+                    mainPresenter.getDataManager().getEvents(filterE) {
+                        filterEvents = filterE
+                        eventsFragment.setViewPagerAdapter(filterE, it)
+                    }
+                }
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.schedule -> {
                 setHeading("events")
                 addFragment(eventsFragment)
+                val filterE = FilterEvents()
+                mainPresenter.getDataManager().getEvents(filterE) {
+                    filterEvents = filterE
+                    eventsFragment.setViewPagerAdapter(filterE, it)
+                }
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.notifications -> {
                 setHeading("notifications")
                 addFragment(NotificationsFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.emergency -> {
                 setHeading("emergency")
                 addFragment(EmergencyFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.developers -> {
                 setHeading("developers")
                 addFragment(DevelopersFragment())
+                drawerLayout.closeDrawer(Gravity.START)
             }
         }
     }

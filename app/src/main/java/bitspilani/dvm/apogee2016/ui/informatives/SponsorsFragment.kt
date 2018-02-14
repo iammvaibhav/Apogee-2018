@@ -3,35 +3,34 @@ package bitspilani.dvm.apogee2016.ui.informatives
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import bitspilani.dvm.apogee2016.R
+import bitspilani.dvm.apogee2016.data.DataManager
+import bitspilani.dvm.apogee2016.data.firebase.model.Sponsor
 import bitspilani.dvm.apogee2016.databinding.SponsorsItemBinding
 import bitspilani.dvm.apogee2016.di.SemiBold
-import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.ui.base.BaseFragment
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-data class SponsorsData(val imageUrl: String, val type: String, val name: String, val priority: String)
-
 class SponsorsViewHolder(val binding: SponsorsItemBinding) : RecyclerView.ViewHolder(binding.root){
-    fun bindData(data: SponsorsData, typeface: Typeface){
+    fun bindData(data: Sponsor, typeface: Typeface){
         binding.data = data
         binding.typeface = typeface
     }
 }
 
-class SponsorsAdapter(val typeface: Typeface, val context: Context) : RecyclerView.Adapter<SponsorsViewHolder>(){
+class SponsorsAdapter(val typeface: Typeface, val context: Context, val sponsors: List<Sponsor>) : RecyclerView.Adapter<SponsorsViewHolder>(){
+
     override fun onBindViewHolder(holder: SponsorsViewHolder, position: Int) {
-        TODO("holder.bindData(GlobalData.sponsorsData[position], typeface)")
+        holder.bindData(sponsors[position], typeface)
         try {
-            TODO("Picasso.with(context).load(GlobalData.sponsorsData[position].imageUrl).fit().centerInside().into(holder.binding.photo)")
+            Picasso.with(context).load(sponsors[position].imageURL).fit().centerInside().into(holder.binding.photo)
         }catch (e: Exception){
             e.printStackTrace()
         }
@@ -41,7 +40,7 @@ class SponsorsAdapter(val typeface: Typeface, val context: Context) : RecyclerVi
         return SponsorsViewHolder(SponsorsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun getItemCount() = TODO("GlobalData.sponsorsData.size")
+    override fun getItemCount() = sponsors.size
 }
 
 class SponsorsFragment : BaseFragment(){
@@ -49,6 +48,9 @@ class SponsorsFragment : BaseFragment(){
     @Inject
     @field:SemiBold
     lateinit var typeface: Typeface
+
+    @Inject
+    lateinit var dataManager: DataManager
 
     lateinit var recyclerView: RecyclerView
 
@@ -63,7 +65,8 @@ class SponsorsFragment : BaseFragment(){
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        recyclerView.adapter = SponsorsAdapter(typeface, activity)
+        dataManager.getSponsors { recyclerView.adapter = SponsorsAdapter(typeface, activity, it) }
+
         return view
     }
 }

@@ -75,6 +75,12 @@ class ContactFragment : BaseFragment(){
     lateinit var typeface: Typeface
 
     lateinit var recycler_view: RecyclerView
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        getFragmentComponent().inject(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_contact, container, false)
 
