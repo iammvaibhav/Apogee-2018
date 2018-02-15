@@ -24,7 +24,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService(){
         val receive = "Sent on ${SimpleDateFormat("dd MMM").format(date)} at ${SimpleDateFormat("HH:mm").format(date)}"
 
         sendNotification(title, body)
-
         AppPreferencesHelper(applicationContext).putNotification(NotificationData(title, body, receive, date))
     }
 
@@ -33,7 +32,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService(){
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
-                //TODO(.setSmallIcon(R.drawable.notif))
+                .setSmallIcon(android.R.drawable.ic_delete) //TODO(Change this icon)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setStyle(NotificationCompat.BigTextStyle()
                         .bigText(body))

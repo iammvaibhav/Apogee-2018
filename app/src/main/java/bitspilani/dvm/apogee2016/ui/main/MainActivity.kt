@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Fragment
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
@@ -36,7 +35,6 @@ import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListene
 import bitspilani.dvm.apogee2016.ui.events.EventClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import bitspilani.dvm.apogee2016.ui.informatives.*
-import bitspilani.dvm.apogee2016.ui.login.LoginActivity
 import bitspilani.dvm.apogee2016.ui.profile.ProfileFragment
 import bitspilani.dvm.apogee2016.utils.PathParser
 import com.google.android.gms.location.*
@@ -203,10 +201,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 when(position) {
                     0 -> {
                         setHeading("profile")
-                        if (!mainPresenter.getDataManager().getUserLoggedIn())
-                        startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), 69)
-                        else
-                            addFragment(profileFragment)
+                        addFragment(profileFragment)
                     }
                     1 -> {
                         setHeading("events")
@@ -218,9 +213,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                         }
                     }
                     2 -> {
+                        setHeading("map")
                         val mapFragment = MapFragment()
                         mapFragment.getMapAsync(this@MainActivity)
-                        setHeading("profile")
                         addFragment(mapFragment)
                     }
                     3 -> {
@@ -634,15 +629,6 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             }
         }
 
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 69) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK)
-                addFragment(profileFragment)
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,

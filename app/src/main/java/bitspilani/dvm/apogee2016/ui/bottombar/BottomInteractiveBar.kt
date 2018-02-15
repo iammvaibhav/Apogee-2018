@@ -198,26 +198,30 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-            if( centerIconDrawableBackground.bounds.contains(event.x.toInt(), event.y.toInt())) {
-                bottomInteractiveBarOnClickListener?.onCenterButtonClick()
-                return true
-            }
 
-            touchBoxes.forEachIndexed { index, rect ->
-                if (rect.contains(event.x.toInt(), event.y.toInt())) {
-                    icons.forEach { DrawableCompat.setTint(it!!, textColorUnselected) }
-                    textPaint.forEach { it.color = textColorUnselected }
-                    DrawableCompat.setTint(icons[currPos]!!, CC.getScreenColorFor(0).colorB)
-                    textPaint[currPos].color = CC.getScreenColorFor(0).colorB
-                    centerIconBackgroundGradientArray[0] = CC.getScreenColorFor(0).colorA
-                    centerIconBackgroundGradientArray[1] = CC.getScreenColorFor(0).colorB
-                    shadowGradientArray[0] = CC.getScreenColorFor(0).colorB
-                    centerIconDrawableBackground.colors = centerIconBackgroundGradientArray
-                    shadowDrawable.colors = shadowGradientArray
-                    invalidate()
-                    currPos = index
-                    bottomInteractiveBarOnClickListener?.onClickItem(index)
+
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if( centerIconDrawableBackground.bounds.contains(event.x.toInt(), event.y.toInt())) {
+                    bottomInteractiveBarOnClickListener?.onCenterButtonClick()
                     return true
+                }
+
+                touchBoxes.forEachIndexed { index, rect ->
+                    if (rect.contains(event.x.toInt(), event.y.toInt())) {
+                        icons.forEach { DrawableCompat.setTint(it!!, textColorUnselected) }
+                        textPaint.forEach { it.color = textColorUnselected }
+                        DrawableCompat.setTint(icons[index]!!, CC.getScreenColorFor(0).colorB)
+                        textPaint[index].color = CC.getScreenColorFor(0).colorB
+                        centerIconBackgroundGradientArray[0] = CC.getScreenColorFor(0).colorA
+                        centerIconBackgroundGradientArray[1] = CC.getScreenColorFor(0).colorB
+                        shadowGradientArray[0] = CC.getScreenColorFor(0).colorB
+                        centerIconDrawableBackground.colors = centerIconBackgroundGradientArray
+                        shadowDrawable.colors = shadowGradientArray
+                        invalidate()
+                        currPos = index
+                        bottomInteractiveBarOnClickListener?.onClickItem(index)
+                        return true
+                    }
                 }
             }
 

@@ -45,7 +45,6 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         getActivityComponent().inject(this)
         loginPresenter.onAttach(this)
 
-        Log.e("fsd", "oncreate, ${this.hashCode()}")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = Color.parseColor("#FF0077")
 
@@ -68,16 +67,6 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         if (account != null)
             signedIn(account)*/
 
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("sdf","onPause ${this.hashCode()}")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.e("onstop", "fdsf ${this.hashCode()}")
     }
 
     override fun onClick(v: View) {
@@ -145,22 +134,6 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("ads", "ondestroy ${this.hashCode()}")
-        loginPresenter.onDetach()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.e("dsf", "onresume ${this.hashCode()}")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.e("sdf", "onstart ${this.hashCode()}")
-    }
-
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -222,8 +195,6 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.e("Error", "signInResult:failed code=" + e.statusCode)
-            Log.e("error", e.message ?: "")
-            Log.e("e", e.localizedMessage ?: "")
             Snackbar.make(root, "Error! Please try again", Snackbar.LENGTH_LONG).show()
         }
 

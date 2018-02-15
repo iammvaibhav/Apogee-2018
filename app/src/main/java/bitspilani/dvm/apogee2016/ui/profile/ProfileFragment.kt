@@ -42,6 +42,11 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
     lateinit var scrollView: ScrollView
     lateinit var signedEvents: TextView
 
+    lateinit var profileDetails: LinearLayout
+    lateinit var loggedOutMessage: FrameLayout
+    lateinit var message: TextView
+    lateinit var signIn: Button
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         getFragmentComponent().inject(this)
@@ -59,26 +64,46 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
         qrcodeImage = view.findViewById(R.id.qrcodeImage)
         scrollView = view.findViewById(R.id.scrollview)
         signedEvents = view.findViewById(R.id.signedEvents)
+        profileDetails = view.findViewById(R.id.profileDetails)
+        loggedOutMessage = view.findViewById(R.id.loggedOutMessage)
+        message = view.findViewById(R.id.message)
+        signIn = view.findViewById(R.id.signIn)
 
-        progressBar.visibility = View.VISIBLE
+        message.text = "YOU ARE NOT LOGGED IN\nPlease login to access QR Code"
 
-        name.text = profilePresenter.getDataManager().getCurrentUserName()
-        who.text = if (profilePresenter.getDataManager().getIsBitsian()) "bitsian" else "outstee"
-        qrcode.text = profilePresenter.getDataManager().getQrCode()
-        signedEvents.text = profilePresenter.getDataManager().getSignedEvents()
+        if (!profilePresenter.getDataManager().getUserLoggedIn()) {
+            loggedOutMessage.visibility = View.VISIBLE
+            profileDetails.visibility = View.GONE
+        } else {
+            loggedOutMessage.visibility = View.GONE
+            profileDetails.visibility = View.VISIBLE
+            afterLogin()
+        }
+
+        signIn.setOnClickListener {
+            if (activity != null)
+                startActivityForResult(Intent(activity, LoginActivity::class.java), 69)
+        }
 
         logout.setOnClickListener {
             profilePresenter.getDataManager().setUserLoggedIn(false)
             profilePresenter.getDataManager().setCurrentUserName("")
             profilePresenter.getDataManager().setQrCode("")
             profilePresenter.getDataManager().setSignedEvents("")
-            try {
-                activity.startActivityForResult(Intent(activity, LoginActivity::class.java), 69)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            loggedOutMessage.visibility = View.VISIBLE
+            profileDetails.visibility = View.GONE
         }
 
+        return view
+    }
+
+    fun afterLogin() {
+        progressBar.visibility = View.VISIBLE
+
+        name.text = profilePresenter.getDataManager().getCurrentUserName()
+        who.text = if (profilePresenter.getDataManager().getIsBitsian()) "bitsian" else "outstee"
+        qrcode.text = profilePresenter.getDataManager().getQrCode()
+        signedEvents.text = profilePresenter.getDataManager().getSignedEvents()
 
         if (profilePresenter.getDataManager().getQrCode() != "") {
             val multiFormatWriter = MultiFormatWriter()
@@ -150,16 +175,18 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                         progressBar.visibility = View.INVISIBLE
                     }
                 })
-
-        return view
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 69) {
             if (resultCode == RESULT_OK) {
-                Log.e("dff", "fragment result oko")
+                loggedOutMessage.visibility = View.GONE
+                profileDetails.visibility = View.VISIBLE
+                afterLogin()
             }else {
-                Log.e("lolwut", "ae raja raja raja")
+                if (activity != null)
+                    Toast.makeText(activity, "Please login to view profile", Toast.LENGTH_SHORT).show()
             }
         }
     }
