@@ -41,6 +41,7 @@ import com.awesomecorp.sammy.apogeewallet.fragments.WalletEmptyFragment;
 import com.awesomecorp.sammy.apogeewallet.fragments.WalletHomeFragment;
 import com.awesomecorp.sammy.apogeewallet.fragments.WalletLoadFragment;
 import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
+import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnDataLoadedListner;
 import com.awesomecorp.sammy.apogeewallet.listners.OnReceiptItemClickListener;
 import com.awesomecorp.sammy.apogeewallet.listners.TransactionCompleteListener;
@@ -70,7 +71,7 @@ import okhttp3.OkHttpClient;
 import static com.awesomecorp.sammy.apogeewallet.utils.Utils.userObject;
 
 public class WalletActivity extends FragmentActivity implements TransactionCompleteListener,
-        OnDataLoadedListner, AddMoneyButtonClickListener,OnReceiptItemClickListener{
+        OnDataLoadedListner, AddMoneyButtonClickListener,OnReceiptItemClickListener, BackPressedListener {
 
     boolean clicked;
     BottomSheetBehavior sheetBehavior;
@@ -720,6 +721,8 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
         heading.setText("Transaction ID : " + transaction.getId());
         total.setText("INR " + transaction.getValue());
 
+cancelOrder.setText("GENERATE OTP");
+cancelOrder.setBackgroundResource(R.drawable.active_btn);
 
 
         final String transactionType = transaction.getT_type();
@@ -732,18 +735,20 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
             if (stall.isOrder_complete() || stall.isCancelled()){
                 cancelOrder.setBackgroundResource(R.drawable.inactive_button);
                 cancelOrder.setEnabled(false);
-                cancelOrder.setVisibility(View.VISIBLE);
                 if (stall.isCancelled()){
-                    cancelOrder.setText("UID : N.A." );
+                    cancelOrder.setText("OTP : N.A." );
                 }else {
-                    cancelOrder.setText("UID : " + transaction.getStallgroup().getUID());
+                    cancelOrder.setText("OTP : " + transaction.getStallgroup().getUID());
                 }
 
             }else if (stall.isOrder_ready()){
                 cancelOrder.setVisibility(View.VISIBLE);
                 cancelOrder.setEnabled(true);
             }else{
-                cancelOrder.setVisibility(View.INVISIBLE);
+                Log.e("In on else", "Here");
+                cancelOrder.setVisibility(View.VISIBLE);
+                cancelOrder.setBackgroundResource(R.drawable.inactive_button);
+
                 cancelOrder.setEnabled(false);
             }
         }
@@ -776,8 +781,7 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
             layout.startAnimation(slideUp);
             layout.setVisibility(View.VISIBLE);
         }
-        cancelOrder.setText("GENERATE OTP");
-        cancelOrder.setBackgroundResource(R.drawable.active_btn);
+   
 
         clicked = false;
         cancelOrder.setOnClickListener(new View.OnClickListener() {
@@ -922,6 +926,12 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
             super.onBackPressed();
         }
     }
+
+@Override
+    public void onBackButtonFragment() {
+       super.onBackPressed();
+    }
+
 
 
     @Override

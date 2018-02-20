@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.adapters.RecieptItemAdapter;
 import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
+import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnReceiptItemClickListener;
 import com.awesomecorp.sammy.apogeewallet.models.Bitsian;
 import com.awesomecorp.sammy.apogeewallet.models.Participant;
@@ -50,6 +51,7 @@ public class WalletHomeFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     SharedPreferences preferences;
 
+    BackPressedListener backPressedListener;
     AddMoneyButtonClickListener moneyButtonListener;
     OnReceiptItemClickListener onReceiptItemClickListener;
 
@@ -107,6 +109,14 @@ public class WalletHomeFragment extends Fragment {
             }
         });
 
+        ImageView back = view.findViewById(R.id.back_button);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backPressedListener.onBackButtonFragment();
+            }
+        });
+
         return view;
     }
 
@@ -116,6 +126,7 @@ public class WalletHomeFragment extends Fragment {
         super.onAttach(context);
 
         try {
+            backPressedListener = (BackPressedListener)context;
             moneyButtonListener = (AddMoneyButtonClickListener) context;
             onReceiptItemClickListener= (OnReceiptItemClickListener) context;
         }catch (ClassCastException e){
@@ -126,6 +137,7 @@ public class WalletHomeFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        backPressedListener = null;
         moneyButtonListener = null;
         onReceiptItemClickListener = null;
         super.onDetach();
@@ -159,7 +171,6 @@ public class WalletHomeFragment extends Fragment {
                             }
                             transactions.add(transaction);
                         }
-                        Log.e("log", transactions.toString());
                         Collections.sort(transactions, new TransactionComparator());
 
                         adapter = new RecieptItemAdapter(transactions, getActivity(), onReceiptItemClickListener);
@@ -177,28 +188,6 @@ public class WalletHomeFragment extends Fragment {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    void swd(Transaction transaction, DataSnapshot dataSnapshot){
-        try {
-            String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
-            transaction.setCreated_at(dateOfTransaction);
-            transaction.setId(Long.valueOf(dataSnapshot.child("id").getValue().toString()));
-            transaction.setT_type("swd");
-            transaction.setValue(Long.valueOf(dataSnapshot.child("value").getValue().toString()));
-            transaction.setStallgroup(null);
-            transaction.setTransfer(null);
-
-            try {
-                Date date = format.parse(dateOfTransaction);
-                System.out.println(date);
-                transaction.setDate(date);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -260,6 +249,28 @@ public class WalletHomeFragment extends Fragment {
             transaction.setCreated_at(dateOfTransaction);
             transaction.setId(Long.valueOf(dataSnapshot.child("id").getValue().toString()));
             transaction.setT_type("add");
+            transaction.setValue(Long.valueOf(dataSnapshot.child("value").getValue().toString()));
+            transaction.setStallgroup(null);
+            transaction.setTransfer(null);
+
+            try {
+                Date date = format.parse(dateOfTransaction);
+                System.out.println(date);
+                transaction.setDate(date);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void swd(Transaction transaction, DataSnapshot dataSnapshot){
+        try {
+            String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
+            transaction.setCreated_at(dateOfTransaction);
+            transaction.setId(Long.valueOf(dataSnapshot.child("id").getValue().toString()));
+            transaction.setT_type("swd");
             transaction.setValue(Long.valueOf(dataSnapshot.child("value").getValue().toString()));
             transaction.setStallgroup(null);
             transaction.setTransfer(null);

@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,10 +16,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.WalletActivity;
-import com.awesomecorp.sammy.apogeewallet.listners.TransactionCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,12 +33,12 @@ public class WebViewActivity extends AppCompatActivity {
     Activity activity;
     WebView webView;
     SharedPreferences preferences;
+    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         String url = getIntent().getExtras().getString("url");
-        final ProgressDialog progress;
         activity = this;
         preferences = getApplicationContext().getSharedPreferences("details",MODE_PRIVATE);
         webView = findViewById(R.id.webView);
@@ -55,9 +57,20 @@ public class WebViewActivity extends AppCompatActivity {
 
         progress = ProgressDialog.show(this, "Loading.....",
                 "Please wait.", true);
+
+        ProgressBar spinner = new android.widget.ProgressBar(WebViewActivity.this, null,android.R.attr.progressBarStyle);
+        spinner.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF4081"), android.graphics.PorterDuff.Mode.SRC_IN);
+        progress.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        progress.setContentView(spinner);
+        progress.setCancelable(false);
+        progress.show();
+
         webView.setWebViewClient(new WebViewClient() {
 
             public void onPageFinished(WebView view, String url) {
+                if (WebViewActivity.this.isDestroyed()) {
+                    return;
+                }
                 if (progress != null)
                     progress.dismiss();
             }
@@ -102,6 +115,13 @@ public class WebViewActivity extends AppCompatActivity {
         webView.loadUrl(url);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progress != null && progress.isShowing())
+            progress.dismiss();
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event)

@@ -41,9 +41,4 @@ public class Transfer {
     public void setBitsian(Bitsian bitsian) {
         this.bitsian = bitsian;
     }
-
-    @Override
-    public String toString() {
-        return "Bitsian ="+bitsian+"Is bitsian = " + is_bitsian;
-    }
 }

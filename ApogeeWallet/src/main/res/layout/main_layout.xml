@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_weight="1"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,9 +20,8 @@
 
         <ImageView
             android:id="@+id/close_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:padding="3dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginRight="15dp"
             android:layout_gravity="right"
             android:src="@drawable/close_black"
@@ -96,6 +95,8 @@
             android:layout_width="35dp"
             android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
+            android:indeterminateTint="@color/colorAccent"
+            android:progressBackgroundTint="@color/colorAccent"
             android:visibility="invisible" />
 
         <Button

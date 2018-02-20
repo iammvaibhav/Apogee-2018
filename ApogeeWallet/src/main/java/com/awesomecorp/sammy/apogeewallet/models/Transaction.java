@@ -1,6 +1,7 @@
 package com.awesomecorp.sammy.apogeewallet.models;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by sammy on 8/2/18.
@@ -82,13 +83,5 @@ public class Transaction {
 
     public void setStallgroup(Stall stallgroup) {
         this.stallgroup = stallgroup;
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "created_at='" + created_at + '\'' +
-                ", date=" + date +
-                '}';
     }
 }
