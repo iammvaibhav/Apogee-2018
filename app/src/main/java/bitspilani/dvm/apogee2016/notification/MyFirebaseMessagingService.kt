@@ -32,7 +32,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService(){
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
-                .setSmallIcon(android.R.drawable.ic_delete) //TODO(Change this icon)
+                .setSmallIcon(android.R.drawable.stat_notify_more) //TODO(Change this icon)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setStyle(NotificationCompat.BigTextStyle()
                         .bigText(body))

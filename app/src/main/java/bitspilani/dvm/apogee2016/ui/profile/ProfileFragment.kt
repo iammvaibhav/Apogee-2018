@@ -3,6 +3,8 @@ package bitspilani.dvm.apogee2016.ui.profile
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,8 +20,8 @@ import com.androidnetworking.AndroidNetworking
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.journeyapps.barcodescanner.BarcodeEncoder
+import com.google.zxing.WriterException
+import com.google.zxing.qrcode.QRCodeWriter
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -102,17 +104,27 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
 
         name.text = profilePresenter.getDataManager().getCurrentUserName()
         who.text = if (profilePresenter.getDataManager().getIsBitsian()) "bitsian" else "outstee"
-        qrcode.text = profilePresenter.getDataManager().getQrCode()
+        //qrcode.text = profilePresenter.getDataManager().getQrCode()
         signedEvents.text = profilePresenter.getDataManager().getSignedEvents()
 
+
         if (profilePresenter.getDataManager().getQrCode() != "") {
-            val multiFormatWriter = MultiFormatWriter()
-            try{
-                val bitMatrix= multiFormatWriter.encode("ae raja raja", BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
-                val barcodeEncoder = BarcodeEncoder()
-                val bitmap =barcodeEncoder.createBitmap(bitMatrix)
-                qrcodeImage.setImageBitmap(bitmap)
-            }catch (e: Exception) {
+            val writer = QRCodeWriter()
+            try {
+                val bitMatrix = writer.encode(profilePresenter.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
+                val width = bitMatrix.width
+                val height = bitMatrix.height
+                Thread {
+                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                    for (x in 0 until width) {
+                        for (y in 0 until height) {
+                            bmp.setPixel(x, y, if (bitMatrix.get(x, y)) Color.BLACK else Color.WHITE)
+                        }
+                    }
+                    progressBar.post { qrcodeImage.setImageBitmap(bmp) }
+                }.start()
+
+            } catch (e: WriterException) {
                 e.printStackTrace()
             }
         }
@@ -126,7 +138,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                 .getAsJSONObject(object : JSONObjectRequestListener {
                     override fun onResponse(response: JSONObject) {
                         try {
-                            Log.e("response", response.getString("token"))
+                            Log.e("responsee", response.getString("token"))
                             val walletToken = JSONObject()
                             walletToken.put("WALLET_TOKEN", "4b6e39873f40492aadee397b03316b62")
                             AndroidNetworking.post(URL.GET_PROFILE)
@@ -141,15 +153,38 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 val isBitsian = response.getJSONObject("wallet").getBoolean("is_bitsian")
                                                 var who1 = if (isBitsian) "bitsian" else "participant"
                                                 profilePresenter.getDataManager().setCurrentUserName(response.getJSONObject(who1).getString("name") ?: "")
-                                                profilePresenter.getDataManager().setQrCode(response.getJSONObject(who1).getString("barcode") ?: "")
+                                                profilePresenter.getDataManager().setQrCode(response.getJSONObject("wallet").getString("uid") ?: "")
+
+                                                if (profilePresenter.getDataManager().getQrCode() != "") {
+                                                    val writer = QRCodeWriter()
+                                                    try {
+                                                        val bitMatrix = writer.encode(profilePresenter.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
+                                                        val width = bitMatrix.width
+                                                        val height = bitMatrix.height
+                                                        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+                                                        for (x in 0 until width) {
+                                                            for (y in 0 until height) {
+                                                                bmp.setPixel(x, y, if (bitMatrix.get(x, y)) Color.BLACK else Color.WHITE)
+                                                            }
+                                                        }
+                                                        qrcodeImage.setImageBitmap(bmp)
+
+                                                    } catch (e: WriterException) {
+                                                        e.printStackTrace()
+                                                    }
+                                                }
+
                                                 val profShows = response.getJSONArray("prof_shows")
                                                 val signedEvents1 = StringBuilder()
-                                                for (i in 0 until profShows.length())
-                                                    signedEvents1.append("${profShows.getString(i)}\n")
-                                                profilePresenter.getDataManager().setSignedEvents(signedEvents1.toString())
+                                                for (i in 0 until profShows.length()) {
+                                                    val profshow = profShows.getJSONObject(i)
+                                                    val name = "${profshow.getString("prof_show_name")} | Total Signed: ${profshow.getInt("count")} | Used : ${profshow.getInt("passed_count")}\n"
+                                                    signedEvents1.append(name)
+                                                }
 
+                                                profilePresenter.getDataManager().setSignedEvents(signedEvents1.toString())
                                                 name.text = response.getJSONObject(who1).getString("name") ?: ""
-                                                qrcode.text = response.getJSONObject(who1).getString("barcode") ?: ""
+                                                //qrcode.text = response.getJSONObject(who1).getString("barcode") ?: ""
                                                 signedEvents.text = signedEvents1.toString()
                                             }catch (e: Exception) {
                                                 e.printStackTrace()
@@ -161,6 +196,9 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                         override fun onError(anError: ANError?) {
                                             onError("Error! Please try again")
                                             progressBar.visibility = View.INVISIBLE
+                                            Log.e("dsf", anError?.errorBody ?: "" )
+                                            Log.e("dsf", anError?.errorDetail ?: "" )
+                                            Log.e("dsf", anError?.errorCode.toString() ?: "" )
                                         }
                                     })
                         }catch (e: Exception) {
@@ -171,7 +209,9 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                     }
 
                     override fun onError(anError: ANError?) {
-                        onError("Error! Please try again")
+                        Log.e("dsf", anError?.errorBody ?: "" )
+                        Log.e("dsf", anError?.errorDetail ?: "" )
+                        Log.e("dsf", anError?.errorCode.toString())
                         progressBar.visibility = View.INVISIBLE
                     }
                 })

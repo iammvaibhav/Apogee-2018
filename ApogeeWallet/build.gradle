@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation 'com.amitshekhar.android:android-networking:1.0.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
+    implementation 'com.google.firebase:firebase-database:11.8.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}

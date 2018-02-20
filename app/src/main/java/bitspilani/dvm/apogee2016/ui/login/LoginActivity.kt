@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import bitspilani.dvm.apogee2016.R
 import bitspilani.dvm.apogee2016.ui.base.BaseActivity
 import bitspilani.dvm.apogee2016.utils.URL
@@ -94,7 +93,6 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
             }
             R.id.outstationParticipantLogin -> {
                 progress.visibility = View.VISIBLE
-                Toast.makeText(this, "Outstii", Toast.LENGTH_SHORT).show()
 
                 val credentials = JSONObject()
                 credentials.put("username", input_email.text)

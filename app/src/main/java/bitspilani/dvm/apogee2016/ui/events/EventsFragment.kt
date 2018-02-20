@@ -20,7 +20,9 @@ import bitspilani.dvm.apogee2016.di.Regular
 import bitspilani.dvm.apogee2016.ui.base.BaseFragment
 import bitspilani.dvm.apogee2016.ui.main.CC
 import bitspilani.dvm.apogee2016.ui.main.MainActivity
+import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen_main_content.*
+import kotlinx.android.synthetic.main.right_drawer.*
 import javax.inject.Inject
 
 /**
@@ -49,15 +51,12 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        eventClickListener = (getBaseActivity() as MainActivity)
         getFragmentComponent().inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.events_fragment, container, false)
         viewPager = view.findViewById(R.id.viewPager)
-        viewPager.addOnPageChangeListener(this)
-        viewPager.addOnPageChangeListener((activity as MainActivity).bib)
         next = view.findViewById(R.id.next)
         prev = view.findViewById(R.id.prev)
         next.setOnClickListener(this)
@@ -65,8 +64,15 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         heading = view.findViewById(R.id.subLabel)
         heading.typeface = regularFont
         eventsMvpPresenter.onAttach(this)
-        (getBaseActivity() as MainActivity).initialize()
         return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        eventClickListener = (getBaseActivity() as MainActivity)
+        viewPager.addOnPageChangeListener(this)
+        viewPager.addOnPageChangeListener((activity as MainActivity).bib)
+        (getBaseActivity() as MainActivity).initialize()
     }
 
     override fun onClick(v: View) {
@@ -100,6 +106,9 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             try {
                 activity.window.statusBarColor = CC.getScreenColorFor(0).colorC
+                (activity as MainActivity).currColor = CC.getScreenColorFor(0).colorC
+                (activity as MainActivity).leftDrawer.setImageBitmap((activity as MainActivity).getLeftNavDrawerBackground(CC.getScreenColorFor(0).colorC))
+                (activity as MainActivity).rightDrawer.setImageBitmap((activity as MainActivity).getRightNavDrawerBackground(CC.getScreenColorFor(0).colorC))
             }catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -125,6 +134,13 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
     }
 
     override fun onPageSelected(position: Int) {
+        try {
+            (activity as MainActivity).currColor = CC.getScreenColorFor(position).colorC
+            (activity as MainActivity).leftDrawer.setImageBitmap((activity as MainActivity).getLeftNavDrawerBackground(CC.getScreenColorFor(position).colorC))
+            (activity as MainActivity).rightDrawer.setImageBitmap((activity as MainActivity).getRightNavDrawerBackground(CC.getScreenColorFor(position).colorC))
+        }catch (e: Exception) {
+            e.printStackTrace()
+        }
         val headText = (viewPager.adapter as EventsViewPagerAdapter?)?.queriedEvents?.get(position)?.first ?: ""
         heading.text = headText
         heading.setTextColor(CC.getScreenColorFor(position).colorB)

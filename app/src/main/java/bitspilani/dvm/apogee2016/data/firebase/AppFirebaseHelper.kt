@@ -117,9 +117,15 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
 
     private fun isOngoing(event: Event): Boolean {
         try {
-            val start = dateFormat.parse("${event.day} 2 2017 ${event.startTime}")
-            val end = dateFormat.parse("${event.day} 2 2017 ${event.startTime}")
+            val start = dateFormat.parse("${event.day} 2 2018 ${event.startTime}")
+            var end = Date(start.time + 10800000)
             val curr = Date()
+
+            try {
+                end = Date(start.time + (event.endTime * 3600000).toInt())
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
 
             return curr.after(start) && curr.before(end)
         }catch (e: Exception) {

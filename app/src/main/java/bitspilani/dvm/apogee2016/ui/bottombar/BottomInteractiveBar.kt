@@ -77,7 +77,7 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
 
         shadowDrawable.shape = GradientDrawable.OVAL
         shadowDrawable.gradientType = GradientDrawable.RADIAL_GRADIENT
-        shadowDrawable.gradientRadius = 200f
+        shadowDrawable.gradientRadius = 150f
         shadowDrawable.colors = shadowGradientArray
 
         textPaint.forEach {
@@ -99,7 +99,7 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
         baseRect.set(0, height / 2, width, height)
         shadowRect.set(0, 0, width, height / 2)
 
-        var halfSize = (0.6 * barHeight).toInt()
+        var halfSize = (0.5 * barHeight).toInt()
         centerIconDrawableBackground.bounds = Rect(w / 2 - halfSize, shadowHeight - halfSize, w / 2 + halfSize, shadowHeight + halfSize)
 
         halfSize *= 2

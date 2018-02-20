@@ -1,9 +1,11 @@
 package bitspilani.dvm.apogee2016.ui.main
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Fragment
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
@@ -35,8 +37,10 @@ import bitspilani.dvm.apogee2016.ui.bottombar.BottomInteractiveBarOnClickListene
 import bitspilani.dvm.apogee2016.ui.events.EventClickListener
 import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import bitspilani.dvm.apogee2016.ui.informatives.*
+import bitspilani.dvm.apogee2016.ui.login.LoginActivity
 import bitspilani.dvm.apogee2016.ui.profile.ProfileFragment
 import bitspilani.dvm.apogee2016.utils.PathParser
+import com.awesomecorp.sammy.apogeewallet.WalletActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -86,6 +90,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
     val eventsFragment by lazy { EventsFragment() }
     val profileFragment by lazy { ProfileFragment() }
+    val mapFragment by lazy { MapFragment() }
 
     var filterEvents = FilterEvents()
     var filterEventsCurrSession = FilterEvents()
@@ -98,6 +103,8 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     var mLastLocation: Location? = null
     var mCurrLocationMarker: Marker? = null
     var mFusedLocationClient: FusedLocationProviderClient? = null
+
+    var currColor = CC.getScreenColorFor(0).colorC
 
     @Inject
     @field:SemiBold
@@ -126,18 +133,21 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             options.inSampleSize = 2
             backgroundArt = BitmapFactory.decodeResource(resources, R.drawable.background_art)
 
+            try {
+                eventBottomSheet.post {
+                    eventBottomSheet.background = getBottomSheetBackground(CC.getScreenColorFor(0).colorC)
+                }
 
-            eventBottomSheet.post {
-                eventBottomSheet.background = getBottomSheetBackground(Color.BLACK)
+                leftDrawer.post {
+                    leftDrawer.setImageBitmap(getLeftNavDrawerBackground(CC.getScreenColorFor(0).colorC))
+                }
+
+                rightDrawer.post {
+                    rightDrawer.setImageBitmap(getRightNavDrawerBackground(CC.getScreenColorFor(0).colorC))
+                }
+            }catch (e: Exception) {
+                e.printStackTrace()
             }
-
-            /*leftDrawer.post {
-                leftDrawer.backgroundDrawable = getLeftNavDrawerBackground(Color.parseColor("#0CA9EF"))
-            }
-
-            rightDrawer.post {
-                rightDrawer.backgroundDrawable = getRightNavDrawerBackground(Color.parseColor("#0CEFB9"))
-            }*/
 
             bottomSheetFilterView = LayoutInflater.from(this).inflate(R.layout.filter_events_bottom_sheet, eventBottomSheet, false)
 
@@ -191,10 +201,15 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         notifications.setOnClickListener(this)
         emergency.setOnClickListener(this)
         developers.setOnClickListener(this)
+        blog.setOnClickListener(this)
+
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
             override fun onCenterButtonClick() {
-                Toast.makeText(this@MainActivity, "Center Clicked", Toast.LENGTH_SHORT).show()
+                if (mainPresenter.getDataManager().getUserLoggedIn())
+                    startActivity(Intent(this@MainActivity, WalletActivity::class.java))
+                else
+                    startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), 99)
             }
 
             override fun onClickItem(position: Int) {
@@ -214,7 +229,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                     }
                     2 -> {
                         setHeading("map")
-                        val mapFragment = MapFragment()
+                        val mapFragment = mapFragment
                         mapFragment.getMapAsync(this@MainActivity)
                         addFragment(mapFragment)
                     }
@@ -245,10 +260,13 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
     override fun onClick(view: View) {
         when(view.id) {
-            R.id.hamburger -> drawerLayout.openDrawer(Gravity.START)
+            R.id.hamburger -> {
+                drawerLayout.openDrawer(Gravity.START)
+            }
             R.id.closeLeft -> drawerLayout.closeDrawer(Gravity.START)
             R.id.closeRight -> drawerLayout.closeDrawer(Gravity.END)
             R.id.options -> {
+                eventBottomSheet.background = getBottomSheetBackground(currColor)
                 filterEventsCurrSession = filterEvents.copy()
                 eventBottomSheet.removeAllViews()
                 eventBottomSheet.addView(bottomSheetFilterView)
@@ -354,6 +372,11 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 addFragment(NotificationsFragment())
                 drawerLayout.closeDrawer(Gravity.START)
             }
+            R.id.blog -> {
+                setHeading("epc blog")
+                addFragment(BlogFragment())
+                drawerLayout.closeDrawer(Gravity.START)
+            }
             R.id.emergency -> {
                 setHeading("emergency")
                 addFragment(EmergencyFragment())
@@ -405,7 +428,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mGoogleMap = googleMap
-        mGoogleMap?.setMapType(GoogleMap.MAP_TYPE_HYBRID)
+        mGoogleMap?.setMapType(GoogleMap.MAP_TYPE_NORMAL)
 
         mLocationRequest = LocationRequest()
         mLocationRequest?.setInterval(120000) // two minute interval
@@ -443,6 +466,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         val ltc = LatLng(28.365056, 75.590092)
         val nab = LatLng(28.362228, 75.587346)
         val swimmingPool = LatLng(28.3607699,75.5913962)
+        val mlawns = LatLng(28.363479, 75.588169)
 
 
         val cameraPosition = CameraPosition.Builder().
@@ -469,6 +493,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         googleMap?.addMarker(MarkerOptions().position(medc).title("MedC").snippet("Medical Center"))
         googleMap?.addMarker(MarkerOptions().position(srground).title("SR Grounds").snippet("SR Bhawan Grounds"))
         googleMap?.addMarker(MarkerOptions().position(swimmingPool).title("Swimming Pool").snippet("Bits Swimming Pool"))
+        googleMap?.addMarker(MarkerOptions().position(mlawns).title("M Lawns").snippet("M Lawns"))
 //        mMap.addMarker(new MarkerOptions().position(me).title("You are here!").snippet("Consider yourself located"));
 //        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         googleMap?.isBuildingsEnabled = true
@@ -511,8 +536,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         return BitmapDrawable(resources, bitmap)
     }
 
-    private fun getLeftNavDrawerBackground(color: Int): Drawable {
+    fun getLeftNavDrawerBackground(color: Int): Bitmap {
 
+        val pathData = "M-501,2146v-2146L29.9,0L29.9,-247.1h791.8v288.1a163.1,163.1 0,0 0,83.8 142.4,172.9 172.9,0 0,1 89.1,151.3 172.9,172.9 0,0 1,-89.1 151.3,162.9 162.9,0 0,0 -83.8,142.4v796.9h0.5v107.3h-0.9L821.3,1816.6L821,1816.6L821,2128L293,2128v18Z"
         val bitmap = Bitmap.createBitmap(leftDrawer.width, leftDrawer.height, Bitmap.Config.ARGB_8888)
 
         val canvas = Canvas(bitmap)
@@ -525,14 +551,26 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         canvas.drawARGB(255, Color.red(color), Color.green(color), Color.blue(color))
         canvas.drawRect(0f, 0f, leftDrawer.width.toFloat(), leftDrawer.height.toFloat(), paint)
 
-        val mask = decodeSampledBitmapFromResource(resources, R.drawable.left_drawer_mask)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
-        canvas.drawBitmap(mask, 0f, 0f, paint)
 
-        return BitmapDrawable(resources, mask)
+        /*val path = PathParser.createPathFromPathData(pathData)
+        val shape = ShapeDrawable(PathShape(path, 500.toPx().toFloat(), leftDrawer.height.toFloat()))
+        shape.setBounds(0, 0, 500.toPx(), leftDrawer.height)
+        shape.paint.color = Color.BLACK
+        shape.paint.style = Paint.Style.FILL
+
+        val bitmapTemp = Bitmap.createBitmap(shape.bounds.width(), shape.bounds.height(), Bitmap.Config.ARGB_8888)
+        val canvasTemp = Canvas(bitmapTemp)
+        shape.draw(canvasTemp)
+        val src = Rect(0, 0, bitmapTemp.width, bitmapTemp.height)
+        val dest = Rect(0, 0, leftDrawer.width, leftDrawer.height)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+        canvas.drawBitmap(bitmapTemp, src, dest, paint)*/
+
+        /*return BitmapDrawable(resources, bitmap)*/
+        return bitmap
     }
 
-    private fun getRightNavDrawerBackground(color: Int): Drawable {
+    fun getRightNavDrawerBackground(color: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(rightDrawer.width, rightDrawer.height, Bitmap.Config.ARGB_8888)
 
         val canvas = Canvas(bitmap)
@@ -545,11 +583,11 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         canvas.drawARGB(255, Color.red(color), Color.green(color), Color.blue(color))
         canvas.drawRect(0f, 0f, rightDrawer.width.toFloat(), rightDrawer.height.toFloat(), paint)
 
-        val mask = decodeSampledBitmapFromResource(resources, R.drawable.right_drawer_mask)
+        /*val mask = decodeSampledBitmapFromResource(resources, R.drawable.right_drawer_mask)
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
-        canvas.drawBitmap(mask, 0f, 0f, paint)
+        canvas.drawBitmap(mask, 0f, 0f, paint)*/
 
-        return BitmapDrawable(resources, mask)
+        return bitmap
     }
 
     fun decodeSampledBitmapFromResource(res: Resources, resId: Int): Bitmap {
@@ -658,6 +696,24 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             }
         }// other 'case' lines to check for other
         // permissions this app might request
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 99) {
+            if (resultCode == Activity.RESULT_OK)
+                startActivity(Intent(this@MainActivity, WalletActivity::class.java))
+            else Toast.makeText(this, "Login is required for Wallet", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(Gravity.START))
+            drawerLayout.closeDrawer(Gravity.START)
+        else if(drawerLayout.isDrawerOpen(Gravity.END))
+            drawerLayout.closeDrawer(Gravity.END)
+        else super.onBackPressed()
     }
 
 }

@@ -4,14 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="end">
+    android:layout_gravity="end"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/rightDrawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_mask_group_8"/>
+        app:layout_constraintBottom_toTopOf="@+id/remindMe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/closeRight"
@@ -21,6 +26,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:padding="15dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,27 +37,24 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="144dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="36dp"
         android:text="EVENT INFO"
         android:textColor="#fff"
         android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/eventName1"
         android:layout_width="219dp"
         android:layout_height="117dp"
-        android:layout_marginEnd="8dp"
         android:text="Event Names"
         android:textColor="#fff"
         android:textSize="40dp"
         app:autoSizeMaxTextSize="40dp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:ignore="MissingPrefix" />
@@ -60,10 +63,10 @@
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:tint="@android:color/white"
-        app:layout_constraintEnd_toStartOf="@+id/venue1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eventName1"
         app:srcCompat="@drawable/ic_map" />
 
@@ -71,22 +74,23 @@
         android:id="@+id/venue1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="148dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="18dp"
         android:text="Venue"
         android:textColor="#fff"
         android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/eventName1" />
 
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:tint="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
-        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:srcCompat="@drawable/ic_ongoing" />
 
@@ -103,13 +107,15 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="215dp"
+        android:layout_width="0dp"
         android:layout_height="227dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="280dp"
         app:layout_constraintBottom_toTopOf="@+id/remindMe"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
@@ -117,6 +123,7 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:text="description"
             android:textColor="#fff"
             android:textSize="14dp" />
@@ -125,27 +132,31 @@
     <ToggleButton
         android:id="@+id/remindMe"
         android:layout_width="110dp"
-        android:layout_height="28dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginStart="24dp"
         android:background="@drawable/toggle_button"
         android:text="Button"
         android:textColor="@color/toggle_text"
         android:textOff="REMIND ME"
         android:textOn="REMIND ME"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rules" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rightDrawer" />
 
     <Button
         android:id="@+id/rules"
         android:layout_width="110dp"
         android:layout_height="28dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="8dp"
         android:background="@drawable/button"
         android:text="rules"
         android:textColor="@color/button_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

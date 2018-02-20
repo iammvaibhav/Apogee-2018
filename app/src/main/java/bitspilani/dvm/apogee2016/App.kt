@@ -1,13 +1,13 @@
 package bitspilani.dvm.apogee2016
 
-import android.app.Application
+import android.support.multidex.MultiDexApplication
 import bitspilani.dvm.apogee2016.di.component.ApplicationComponent
 import bitspilani.dvm.apogee2016.di.component.DaggerApplicationComponent
 import bitspilani.dvm.apogee2016.di.module.ApplicationModule
 import com.androidnetworking.AndroidNetworking
 import com.google.firebase.database.FirebaseDatabase
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     private lateinit var applicationComponent: ApplicationComponent
 

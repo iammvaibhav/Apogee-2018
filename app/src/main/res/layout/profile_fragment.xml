@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textSize="14dp"
-        android:text="QR Code: "
+        android:text=""
         android:textColor="#000"/>
 
 

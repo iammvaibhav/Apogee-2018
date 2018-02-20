@@ -136,7 +136,7 @@ class EventsRecylerViewAdapter(val eventsData: List<Event>, val showBy: Int, val
                 .setContentTitle(contentTitle)
                 .setContentText(shortContentText)
                 .setAutoCancel(true)
-                .setSmallIcon(android.R.drawable.ic_menu_delete)
+                .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setStyle(NotificationCompat.BigTextStyle()
                         .bigText(longContentText))

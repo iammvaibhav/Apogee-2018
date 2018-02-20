@@ -1,5 +1,6 @@
 package bitspilani.dvm.apogee2016.ui.splash
 
+import android.os.Handler
 import bitspilani.dvm.apogee2016.data.DataManager
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.di.PerActivity
@@ -18,12 +19,15 @@ class SplashPresenter<V : SplashMvpView> @Inject constructor(dataManager: DataMa
         super.onAttach(mvpView)
 
         getDataManager().getEvents(FilterEvents()) {
-            if (getDataManager().isOnboardingRequired()) {
+            Handler().postDelayed({
+                getMvpView()?.openMainActivity()
+            }, 1000)
+            /*if (getDataManager().isOnboardingRequired()) {
                 getDataManager().setOnBoardingRequired(false)
                 getMvpView()?.openOnboardingActivity()
             } else {
                 getMvpView()?.openMainActivity()
-            }
+            }*/
         }
     }
 
