@@ -45,6 +45,7 @@ import com.awesomecorp.sammy.apogeewallet.fragments.WalletHomeFragment;
 import com.awesomecorp.sammy.apogeewallet.fragments.WalletLoadFragment;
 import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
+import com.awesomecorp.sammy.apogeewallet.listners.CloseBottomSheetListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnDataLoadedListner;
 import com.awesomecorp.sammy.apogeewallet.listners.OnReceiptItemClickListener;
 import com.awesomecorp.sammy.apogeewallet.listners.TransactionCompleteListener;
@@ -73,7 +74,7 @@ import okhttp3.OkHttpClient;
 
 import static com.awesomecorp.sammy.apogeewallet.utils.Utils.userObject;
 
-public class WalletActivity extends FragmentActivity implements TransactionCompleteListener,
+public class WalletActivity extends FragmentActivity implements TransactionCompleteListener, CloseBottomSheetListener,
         OnDataLoadedListner, AddMoneyButtonClickListener,OnReceiptItemClickListener, BackPressedListener {
 
     boolean clicked;
@@ -985,5 +986,10 @@ cancelOrder.setBackgroundResource(R.drawable.active_btn);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment,walletLoadFragment).commit();
     }
 
-
+    @Override
+    public void closeBottomSheetListener() {
+        if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+    }
 }

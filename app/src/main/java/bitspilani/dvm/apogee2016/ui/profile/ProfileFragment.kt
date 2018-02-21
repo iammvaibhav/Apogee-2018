@@ -186,7 +186,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 val signedEvents1 = StringBuilder()
                                                 for (i in 0 until profShows.length()) {
                                                     val profshow = profShows.getJSONObject(i)
-                                                    val name = "${profshow.getString("prof_show_name")} | Passes Left: ${profshow.getInt("count") - profshow.getInt("passed_count")} | Used : ${profshow.getInt("passed_count")}\n"
+                                                    val name = "${profshow.getString("prof_show_name")} | ID : ${profshow.getInt("number")}\nPasses Left: ${profshow.getInt("count") - profshow.getInt("passed_count")} | Used : ${profshow.getInt("passed_count")}\n\n"
                                                     signedEvents1.append(name)
                                                 }
 

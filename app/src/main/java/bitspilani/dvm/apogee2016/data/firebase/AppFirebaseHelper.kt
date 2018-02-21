@@ -1,5 +1,6 @@
 package bitspilani.dvm.apogee2016.data.firebase
 
+import android.util.Log
 import bitspilani.dvm.apogee2016.data.firebase.model.Event
 import bitspilani.dvm.apogee2016.data.firebase.model.FilterEvents
 import bitspilani.dvm.apogee2016.data.firebase.model.ShowBy
@@ -37,17 +38,28 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
                 favourites = pref.getFavouritesArray()
 
                 for (child in snapshot.children) {
-                    val event = child.getValue(Event::class.java)
-                    if ((event != null) && checkIfNotExcluded(event, filterEvents)) {
-                        if ((filterEvents.filterByOngoing && isOngoing(event)) ||
-                                (filterEvents.filterByFavourites && isFavourite(event)) ||
-                                (!(filterEvents.filterByOngoing || filterEvents.filterByFavourites))) {
-                            when(filterEvents.showBy) {
-                                ShowBy.DATE -> { insertIfShowByDate(event) }
-                                ShowBy.CATEGORY -> { insertIfShowByCategory(event)}
+
+                    try {
+                        val event = child.getValue(Event::class.java)
+                        if ((event != null) && checkIfNotExcluded(event, filterEvents)) {
+                            if ((filterEvents.filterByOngoing && isOngoing(event)) ||
+                                    (filterEvents.filterByFavourites && isFavourite(event)) ||
+                                    (!(filterEvents.filterByOngoing || filterEvents.filterByFavourites))) {
+                                when (filterEvents.showBy) {
+                                    ShowBy.DATE -> {
+                                        insertIfShowByDate(event)
+                                    }
+                                    ShowBy.CATEGORY -> {
+                                        insertIfShowByCategory(event)
+                                    }
+                                }
                             }
                         }
+                    }catch (e: Exception) {
+                        Log.e("Error", "e")
+                        e.printStackTrace()
                     }
+
                 }
                 sortDataList()
                 exec(data)

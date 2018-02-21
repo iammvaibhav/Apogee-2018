@@ -4,35 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
+
     <LinearLayout
         android:id="@+id/topLayer"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="vertical"
-        android:layout_weight="0.1">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Margarita"
             android:layout_gravity="left"
-            android:layout_marginStart="5dp"
-            android:textColor="#000"
-            android:textSize="40px"
-            android:padding="5px"
             android:layout_margin="5px"
-            />
+            android:layout_marginStart="5dp"
+            android:padding="5px"
+            android:text="Margarita"
+            android:textColor="#000"
+            android:textSize="40px" />
 
         <TextView
             android:id="@+id/cost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25px"
-            android:padding="5px"
-            android:textColor="#707070"
             android:layout_gravity="left"
             android:layout_weight=".8"
-            android:text="INR 150"/>
+            android:padding="5px"
+            android:text="INR 150"
+            android:textColor="#707070"
+            android:textSize="25px" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

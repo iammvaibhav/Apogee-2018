@@ -21,6 +21,7 @@ import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.adapters.RecieptItemAdapter;
 import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
+import com.awesomecorp.sammy.apogeewallet.listners.CloseBottomSheetListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnReceiptItemClickListener;
 import com.awesomecorp.sammy.apogeewallet.models.Bitsian;
 import com.awesomecorp.sammy.apogeewallet.models.Participant;
@@ -64,6 +65,7 @@ public class WalletHomeFragment extends Fragment {
     BackPressedListener backPressedListener;
     AddMoneyButtonClickListener moneyButtonListener;
     OnReceiptItemClickListener onReceiptItemClickListener;
+    CloseBottomSheetListener closeBottomSheetListener;
 
     ImageView addMoney;
     FirebaseDatabase database;
@@ -136,6 +138,7 @@ public class WalletHomeFragment extends Fragment {
         super.onAttach(context);
 
         try {
+            closeBottomSheetListener = (CloseBottomSheetListener)context;
             backPressedListener = (BackPressedListener)context;
             moneyButtonListener = (AddMoneyButtonClickListener) context;
             onReceiptItemClickListener= (OnReceiptItemClickListener) context;
@@ -147,6 +150,7 @@ public class WalletHomeFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        closeBottomSheetListener = null;
         backPressedListener = null;
         moneyButtonListener = null;
         onReceiptItemClickListener = null;
@@ -416,6 +420,7 @@ public class WalletHomeFragment extends Fragment {
                 editor.putString("balance",balance1);
                 balance.setText(balance1);
                 editor.commit();
+                closeBottomSheetListener.closeBottomSheetListener();
             }catch (Exception e){
                 e.printStackTrace();
             }
