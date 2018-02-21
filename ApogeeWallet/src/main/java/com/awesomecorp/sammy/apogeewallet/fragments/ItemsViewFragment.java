@@ -2,7 +2,6 @@ package com.awesomecorp.sammy.apogeewallet.fragments;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import com.awesomecorp.sammy.apogeewallet.adapters.ItemsAdapter;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnAddToCartButtonListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnCartViewButtonListener;
-import com.awesomecorp.sammy.apogeewallet.listners.ShopLoadListener;
 import com.awesomecorp.sammy.apogeewallet.models.Item;
 import com.awesomecorp.sammy.apogeewallet.models.Shop;
 import com.awesomecorp.sammy.apogeewallet.utils.URLS;
@@ -48,6 +46,7 @@ public class ItemsViewFragment extends Fragment {
     ProgressBar progressBar;
     TextView tv;
     ImageView refresh;
+    TextView header;
     BackPressedListener backPressedListener;
     OnCartViewButtonListener cartViewListener;
     OnAddToCartButtonListener addToCartButtonListener;
@@ -80,6 +79,7 @@ public class ItemsViewFragment extends Fragment {
         progressBar = itemsViewLayout.findViewById(R.id.shop_loader);
         tv = itemsViewLayout.findViewById(R.id.textView11);
         refresh = itemsViewLayout.findViewById(R.id.refresh);
+        header = itemsViewLayout.findViewById(R.id.textView);
         getItems();
         cartView = itemsViewLayout.findViewById(R.id.view_cart);
         Typeface montSemiBold = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Montserrat-SemiBold.ttf");
@@ -166,6 +166,7 @@ public class ItemsViewFragment extends Fragment {
                                     JSONArray products = null;
                                     try {
                                         products = response.getJSONArray("products");
+                                        header.setText(response.getJSONObject("stalls").getString("name"));
                                         for (int i=0; i< products.length(); i++) {
                                             JSONObject object = products.getJSONObject(i);
                                             Item item = new Item();
