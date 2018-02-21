@@ -165,6 +165,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
                     public void onClick(DialogInterface arg0, int arg1) {
                         placed = true;
                         floatingActionButton.setEnabled(false);
+                        floatingActionButton.setVisibility(View.INVISIBLE);
                         cartFragment.startProgressBar();
                         sendCartRequest();
                     }
@@ -175,6 +176,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
                 alert.dismiss();
                 if (placed!=true){
                     floatingActionButton.setEnabled(true);
+                    floatingActionButton.setVisibility(View.VISIBLE);
                 }
             }
         });
