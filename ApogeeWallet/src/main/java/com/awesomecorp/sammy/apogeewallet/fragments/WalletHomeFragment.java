@@ -81,7 +81,7 @@ public class WalletHomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        preferences = getActivity().getApplicationContext().getSharedPreferences("details",MODE_PRIVATE);
+        preferences = getActivity().getApplicationContext().getSharedPreferences("details", MODE_PRIVATE);
         super.onCreate(savedInstanceState);
     }
 
@@ -90,7 +90,7 @@ public class WalletHomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         format = new SimpleDateFormat("dd MMM hh:mm a", Locale.US);
-        View view= inflater.inflate(R.layout.fragment_wallet_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_wallet_home, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         addMoney = view.findViewById(R.id.add_money);
         database = FirebaseDatabase.getInstance();
@@ -99,13 +99,13 @@ public class WalletHomeFragment extends Fragment {
         getData();
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new RecieptItemAdapter(transactions,this.getActivity(),onReceiptItemClickListener);
+        adapter = new RecieptItemAdapter(transactions, this.getActivity(), onReceiptItemClickListener);
         recyclerView.setAdapter(adapter);
-        Typeface montBold = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Montserrat-Bold.ttf");
-        Typeface montSemiBold = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Montserrat-SemiBold.ttf");
+        Typeface montBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-Bold.ttf");
+        Typeface montSemiBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Montserrat-SemiBold.ttf");
         TextView header = view.findViewById(R.id.textView);
         balance = view.findViewById(R.id.textView2);
-        balance.setText(preferences.getString("balance","--"));
+        balance.setText(preferences.getString("balance", "--"));
 
         TextView spentText = view.findViewById(R.id.textView3);
 
@@ -138,11 +138,11 @@ public class WalletHomeFragment extends Fragment {
         super.onAttach(context);
 
         try {
-            closeBottomSheetListener = (CloseBottomSheetListener)context;
-            backPressedListener = (BackPressedListener)context;
+            closeBottomSheetListener = (CloseBottomSheetListener) context;
+            backPressedListener = (BackPressedListener) context;
             moneyButtonListener = (AddMoneyButtonClickListener) context;
-            onReceiptItemClickListener= (OnReceiptItemClickListener) context;
-        }catch (ClassCastException e){
+            onReceiptItemClickListener = (OnReceiptItemClickListener) context;
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
         }
@@ -157,32 +157,39 @@ public class WalletHomeFragment extends Fragment {
         super.onDetach();
     }
 
-    public void getData(){
+    public void getData() {
 
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-             reference =database.getReference().child("wallet")
-                    .child(preferences.getString("walletID","-")).child("transactions");
+            reference = database.getReference().child("wallet")
+                    .child(preferences.getString("walletID", "-")).child("transactions");
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    fetchData();
-                    try{
+                    //fetchData();
+                    int count = 0;
+                    try {
                         transactions.clear();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             Log.e("Key", data.getKey());
+                            count++;
+
                             Transaction transaction = new Transaction();
                             String transactionType = data.child("t_type").getValue().toString();
-                            if (transactionType.equals("buy")){
-                                buy(transaction,data);
-                            }else if (transactionType.equals("add")){
-                                add(transaction,data);
-                            }else if (transactionType.equals("transfer")){
-                                transfer(transaction,data);
-                            }else if (transactionType.equals("recieve")){
-                                receive(transaction,data);
-                            }else if (transactionType.equals("swd")){
-                                swd(transaction,data);
+                            if (transactionType.equals("recieve") && count == 1) {
+                                fetchData();
+                            }
+
+                            if (transactionType.equals("buy")) {
+                                buy(transaction, data);
+                            } else if (transactionType.equals("add")) {
+                                add(transaction, data);
+                            } else if (transactionType.equals("transfer")) {
+                                transfer(transaction, data);
+                            } else if (transactionType.equals("recieve")) {
+                                receive(transaction, data);
+                            } else if (transactionType.equals("swd")) {
+                                swd(transaction, data);
                             }
                             transactions.add(transaction);
                         }
@@ -190,8 +197,8 @@ public class WalletHomeFragment extends Fragment {
 
                         adapter = new RecieptItemAdapter(transactions, getActivity(), onReceiptItemClickListener);
                         recyclerView.setAdapter(adapter);
-                    }catch (Exception e){
-                        Log.e("Exception","here");
+                    } catch (Exception e) {
+                        Log.e("Exception", "here");
                         e.printStackTrace();
                     }
 
@@ -207,7 +214,7 @@ public class WalletHomeFragment extends Fragment {
         }
     }
 
-    void buy(Transaction transaction,DataSnapshot dataSnapshot){
+    void buy(Transaction transaction, DataSnapshot dataSnapshot) {
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);
@@ -233,32 +240,32 @@ public class WalletHomeFragment extends Fragment {
 
             transaction.setStallgroup(stallGrp);
             try {
-                Log.e("Name - ",dateOfTransaction);
+                Log.e("Name - ", dateOfTransaction);
                 Date date = format.parse(dateOfTransaction);
                 System.out.println(date);
                 transaction.setDate(date);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    List<Sales> getSales(DataSnapshot dataSnapshot){
+    List<Sales> getSales(DataSnapshot dataSnapshot) {
         List<Sales> sales = new ArrayList<>();
         try {
-            for (DataSnapshot ds: dataSnapshot.child("stallgroup").child("sales").getChildren()){
+            for (DataSnapshot ds : dataSnapshot.child("stallgroup").child("sales").getChildren()) {
                 Sales sale = ds.getValue(Sales.class);
                 sales.add(sale);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return sales;
     }
 
-    void add(Transaction transaction, DataSnapshot dataSnapshot){
+    void add(Transaction transaction, DataSnapshot dataSnapshot) {
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);
@@ -275,12 +282,12 @@ public class WalletHomeFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    void swd(Transaction transaction, DataSnapshot dataSnapshot){
+    void swd(Transaction transaction, DataSnapshot dataSnapshot) {
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);
@@ -297,12 +304,12 @@ public class WalletHomeFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    void transfer(Transaction transaction, DataSnapshot dataSnapshot){
+    void transfer(Transaction transaction, DataSnapshot dataSnapshot) {
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);
@@ -311,14 +318,13 @@ public class WalletHomeFragment extends Fragment {
             transaction.setValue(-1 * Long.valueOf(dataSnapshot.child("value").getValue().toString()));
             transaction.setStallgroup(null);
 
-            Transfer transfer =new Transfer();
+            Transfer transfer = new Transfer();
             transfer.setIs_bitsian(Boolean.valueOf(dataSnapshot.child("transfer_to_from").child("is_bitsian").getValue().toString()));
             Bitsian bitsian = null;
             Participant participant = null;
-            if (transfer.isIs_bitsian()){
+            if (transfer.isIs_bitsian()) {
                 bitsian = dataSnapshot.child("transfer_to_from").child("bitsian").getValue(Bitsian.class);
-            }
-            else {
+            } else {
                 participant = dataSnapshot.child("transfer_to_from").child("participant").getValue(Participant.class);
             }
 
@@ -332,27 +338,27 @@ public class WalletHomeFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    void receive(Transaction transaction, DataSnapshot dataSnapshot){
+
+    void receive(Transaction transaction, DataSnapshot dataSnapshot) {
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);
             transaction.setId(Long.valueOf(dataSnapshot.child("id").getValue().toString()));
             transaction.setT_type("recieve");
-            transaction.setValue( Long.valueOf(dataSnapshot.child("value").getValue().toString()));
+            transaction.setValue(Long.valueOf(dataSnapshot.child("value").getValue().toString()));
             transaction.setStallgroup(null);
 
-            Transfer transfer =new Transfer();
+            Transfer transfer = new Transfer();
             transfer.setIs_bitsian(Boolean.valueOf(dataSnapshot.child("transfer_to_from").child("is_bitsian").getValue().toString()));
             Bitsian bitsian = null;
             Participant participant = null;
-            if (transfer.isIs_bitsian()){
+            if (transfer.isIs_bitsian()) {
                 bitsian = dataSnapshot.child("transfer_to_from").child("bitsian").getValue(Bitsian.class);
-            }
-            else {
+            } else {
                 participant = dataSnapshot.child("transfer_to_from").child("participant").getValue(Participant.class);
             }
 
@@ -366,16 +372,16 @@ public class WalletHomeFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    void fetchData(){
+    void fetchData() {
 
         JSONObject jsonObject = userObject();
-        Log.e("Here",jsonObject.toString());
+        Log.e("Here", jsonObject.toString());
 
         AndroidNetworking.post(URLS.api_token).addJSONObjectBody(jsonObject).build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -383,10 +389,10 @@ public class WalletHomeFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             String token = response.getString("token");
-                            Log.e("Token",token);
+                            Log.e("Token", token);
 
                             AndroidNetworking.post(URLS.get_profile).addJSONObjectBody(Utils.walletSecret())
-                                    .addHeaders("Authorization","JWT " + token).build().getAsJSONObject(new JSONObjectRequestListener() {
+                                    .addHeaders("Authorization", "JWT " + token).build().getAsJSONObject(new JSONObjectRequestListener() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     successFetch(response);
@@ -410,18 +416,18 @@ public class WalletHomeFragment extends Fragment {
                 });
     }
 
-    void successFetch(JSONObject response){
+    void successFetch(JSONObject response) {
         try {
             String balance1 = response.getJSONObject("wallet").getString("curr_balance");
-            Log.e("TAG: ",response.toString());
+            Log.e("TAG: ", response.toString());
             try {
 
-                SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences("details",MODE_PRIVATE).edit();
-                editor.putString("balance",balance1);
+                SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences("details", MODE_PRIVATE).edit();
+                editor.putString("balance", balance1);
                 balance.setText(balance1);
                 editor.commit();
                 closeBottomSheetListener.closeBottomSheetListener();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

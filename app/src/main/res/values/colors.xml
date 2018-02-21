@@ -6,4 +6,5 @@
     <color name="BIBTextColorUnselected">#757575</color>
     <color name="BIBTextColorSelected">#303030</color>
     <color name="eventsBackground">#FFE14A</color>
+    <color name="abc">@color/colorPrimary</color>
 </resources>

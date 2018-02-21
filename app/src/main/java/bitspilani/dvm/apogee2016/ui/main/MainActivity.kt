@@ -18,7 +18,6 @@ import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -129,7 +128,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
         Thread {
             val options = BitmapFactory.Options()
-            options.inSampleSize = 2
+            options.inSampleSize = 8
             backgroundArt = BitmapFactory.decodeResource(resources, R.drawable.background_art)
 
             try {
@@ -144,7 +143,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 rightDrawer.post {
                     rightDrawer.setImageBitmap(getRightNavDrawerBackground(CC.getScreenColorFor(0).colorC))
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
 
@@ -203,7 +202,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         blog.setOnClickListener(this)
         sms.setOnClickListener(this)
 
-        drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, Gravity.END)
+        //drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, Gravity.END)
 
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
@@ -215,7 +214,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             }
 
             override fun onClickItem(position: Int) {
-                when(position) {
+                when (position) {
                     0 -> {
                         setHeading("profile")
                         addFragment(profileFragment)
@@ -261,7 +260,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     }
 
     override fun onClick(view: View) {
-        when(view.id) {
+        when (view.id) {
             R.id.hamburger -> {
                 drawerLayout.openDrawer(Gravity.START)
             }
@@ -349,8 +348,14 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 addFragment(eventsFragment)
                 val filterE = FilterEvents()
                 filterE.showBy = ShowBy.CATEGORY
-                mainPresenter.getDataManager().getCategoryList { val x = it.toMutableList()
-                    x.forEach { if (it.contains("prof show", true)) x.remove(it) }
+                mainPresenter.getDataManager().getCategoryList {
+                    val x = it.toMutableList()
+                    val y = x.iterator()
+                    while (y.hasNext()) {
+                        val p = y.next()
+                        if (p.contains("prof show", true)) y.remove()
+                    }
+
                     filterE.excludeCategory.addAll(x)
                     mainPresenter.getDataManager().getEvents(filterE) {
                         filterEvents = filterE
@@ -406,8 +411,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             if (rules.text == "rules") {
                 rules.text = "description"
                 description.text = event.rules
-            }
-            else {
+            } else {
                 rules.text = "rules"
                 description.text = event.description
             }
@@ -426,7 +430,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         super.onPause()
         try {
             mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -457,8 +461,8 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
 //        LatLng me=new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
         val gymg = LatLng(28.359211, 75.590495)
-        val medc =  LatLng(28.357417, 75.591219)
-        val srground = LatLng(28.365923,75.587759)
+        val medc = LatLng(28.357417, 75.591219)
+        val srground = LatLng(28.365923, 75.587759)
         val anc = LatLng(28.360346, 75.589632)
         val sac = LatLng(28.360710, 75.585639)
         val fd3 = LatLng(28.363988, 75.586274)
@@ -470,16 +474,11 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         val fk = LatLng(28.361076, 75.585457)
         val ltc = LatLng(28.365056, 75.590092)
         val nab = LatLng(28.362228, 75.587346)
-        val swimmingPool = LatLng(28.3607699,75.5913962)
+        val swimmingPool = LatLng(28.3607699, 75.5913962)
         val mlawns = LatLng(28.363479, 75.588169)
 
 
-        val cameraPosition = CameraPosition.Builder().
-                target(clocktower).
-                tilt(60f).
-                zoom(17f).
-                bearing(0f).
-                build()
+        val cameraPosition = CameraPosition.Builder().target(clocktower).tilt(60f).zoom(17f).bearing(0f).build()
 
         googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
@@ -661,12 +660,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 mCurrLocationMarker = mGoogleMap?.addMarker(markerOptions)
 
                 //move map camera
-                val cameraPosition = CameraPosition.Builder().
-                        target(latLng).
-                        tilt(60f).
-                        zoom(17f).
-                        bearing(0f).
-                        build()
+                val cameraPosition = CameraPosition.Builder().target(latLng).tilt(60f).zoom(17f).bearing(0f).build()
 
                 mGoogleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             }
@@ -716,7 +710,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(Gravity.START))
             drawerLayout.closeDrawer(Gravity.START)
-        else if(drawerLayout.isDrawerOpen(Gravity.END))
+        else if (drawerLayout.isDrawerOpen(Gravity.END))
             drawerLayout.closeDrawer(Gravity.END)
         else super.onBackPressed()
     }
