@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="$5,000"
+            android:text="---"
             android:textStyle="bold"
             android:textSize="45sp"
             tools:ignore="DuplicateIds"/>
@@ -68,6 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00"
+            android:visibility="gone"
             android:textSize="25sp"
              />
     </LinearLayout>

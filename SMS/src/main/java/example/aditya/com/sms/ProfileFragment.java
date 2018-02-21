@@ -50,6 +50,8 @@ public class ProfileFragment extends Fragment {
       @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+          UserStocksData(email);
+          UserData(email);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -75,19 +77,17 @@ public class ProfileFragment extends Fragment {
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
         adapter = new ProfileAdapter(getContext(),my_stocks);
         mRecyclerView.setAdapter(adapter);
-        UserStocksData(email);
-        UserData(email);
 
-      //  calculateStockValue();
+
+       calculateStockValue();
         return rootView;
                 //inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
 
-    String username = "test1";
-    String email = "test1@gmail.com";
+    String email = MainActivity.email;
 
-    static void UserStocksData(final String email) {
+   static void UserStocksData(final String email) {
 
         Thread thread = new Thread(new Runnable() {
 
@@ -126,7 +126,9 @@ public class ProfileFragment extends Fragment {
                                     }catch (Exception e) {
                                         Log.e("error", e.getMessage());
                                     }
-                                    adapter.notifyDataSetChanged();
+                                    calculateStockValue();
+                                    if(adapter!=null)
+                                    {adapter.notifyDataSetChanged();}
                                   //  progressDialog.dismiss();
                                 }
                                 @Override
@@ -146,16 +148,29 @@ public class ProfileFragment extends Fragment {
 
         thread.start();
     }
+   static int m = 0;
 
     private static void calculateStockValue() {
-        int m = 0;
+        m=0;
         if (my_stocks != null) {
             for (int i = 0; i < my_stocks.size(); i++) {
                 m = m + (my_stocks.get(i).getCurrentPrice() * my_stocks.get(i).getWithMe());
             }
-            worth_tv2.setText(String.format("%.2f", (double) m));
-            worth_tv.setText(String.format("%.2f", (double) m + (double) cash_inhand));
 
+         try {
+
+                worth_tv2.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        worth_tv2.setText(String.format("%.2f", (double) m));
+                        worth_tv.setText(String.format("%.2f", (double) m + (double) cash_inhand));
+                    }
+                });
+
+         }
+         catch (Exception e){
+                e.printStackTrace();
+         }
             //  worth_tv.setText(String.valueOf(m+cash_inhand));
         }
     }

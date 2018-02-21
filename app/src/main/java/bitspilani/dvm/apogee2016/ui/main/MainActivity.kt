@@ -18,7 +18,6 @@ import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -203,7 +202,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         blog.setOnClickListener(this)
         sms.setOnClickListener(this)
 
-        drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, Gravity.END)
+
 
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
@@ -350,7 +349,12 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 val filterE = FilterEvents()
                 filterE.showBy = ShowBy.CATEGORY
                 mainPresenter.getDataManager().getCategoryList { val x = it.toMutableList()
-                    x.forEach { if (it.contains("prof show", true)) x.remove(it) }
+                    val y = x.iterator()
+                    while (y.hasNext()) {
+                        val p = y.next()
+                        if (p.contains("prof show", true)) y.remove()
+                    }
+
                     filterE.excludeCategory.addAll(x)
                     mainPresenter.getDataManager().getEvents(filterE) {
                         filterEvents = filterE
@@ -390,7 +394,10 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.sms -> {
-                startActivity(Intent(this@MainActivity, MainActivity::class.java))
+                if (mainPresenter.getDataManager().getUserLoggedIn())
+                    startActivity(Intent(this@MainActivity, MainActivity::class.java))
+                else
+                    startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), 858)
             }
         }
     }
@@ -710,6 +717,12 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             if (resultCode == Activity.RESULT_OK)
                 startActivity(Intent(this@MainActivity, WalletActivity::class.java))
             else Toast.makeText(this, "Login is required for Wallet", Toast.LENGTH_SHORT).show()
+        }
+
+        if (requestCode == 858) {
+            if (resultCode == Activity.RESULT_OK)
+                startActivity(Intent(this@MainActivity, MainActivity::class.java))
+            else Toast.makeText(this, "Login is required for SMS", Toast.LENGTH_SHORT).show()
         }
     }
 

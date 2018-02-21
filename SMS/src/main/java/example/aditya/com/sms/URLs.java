@@ -8,8 +8,8 @@ public  class URLs {
 
   //public static String BASE = "http://172.17.41.114:8000";
     public static String KEY = "9bBo3YmHufzvSYWjbtkURd";
-    //public static String BASE = "http://192.168.43.139:8000";
-    public static String BASE = "http://172.17.56.191:8000";
+    public static String BASE = "https://sms18.pythonanywhere.com";
+
     public static String URL_LOGIN = BASE+"/userlogin";
     public static String URL_USER_DATA =BASE+"/userprimarydetails";
     public static String URL_USER_STOCKS_DATA =BASE+"/userstockdetails";

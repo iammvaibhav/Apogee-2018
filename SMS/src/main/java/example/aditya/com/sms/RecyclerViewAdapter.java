@@ -30,36 +30,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.market = market;
         if(market==0){ currency = "\u20B9";}
        else if(market==1){ currency = "$";}
-
     }
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         View mView;
         TextView title;
         TextView current_price;
-        ImageView price_icon;
-        LinearLayout view;
-        TextView percent;
-        ImageView percent_icon;
-        Button buy;
+         LinearLayout view;
+         Button buy;
         Button sell;
-
-
+        TextView percent_text;
+        ImageView percent_image;
 
         private MyViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             this.title = itemView.findViewById(R.id.title_tv);
             this.current_price = itemView.findViewById(R.id.price_tv);
-            this.price_icon = itemView .findViewById(R.id.icon);
-            this.percent = itemView.findViewById(R.id.percent_tv);
+          //  this.price_icon = itemView .findViewById(R.id.icon);
+          //  this.percent = itemView.findViewById(R.id.percent_tv);
             this.view = itemView.findViewById(R.id.view);
-            this.percent_icon = itemView .findViewById(R.id.percent_image);
+       //     this.percent_icon = itemView .findViewById(R.id.percent_image);
             this.buy = itemView.findViewById(R.id.buy);
             this.sell = itemView.findViewById(R.id.sell);
-          //  this.currency_tv = itemView.findViewById(R.id.currency_tv);
-
+            this.percent_text = itemView.findViewById(R.id.percenttext);
+            this.percent_image = itemView.findViewById(R.id.percentimage);
+         //  this.currency_tv = itemView.findViewById(R.id.currency_tv);
         }
     }
 
@@ -67,16 +63,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_view, parent, false);
-
         return new MyViewHolder(view);
-
     }
-int current =-1;
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        holder.percent_icon.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
+        holder.percent_image.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
         holder.title.setText(mItems.get(position).getName());
         if(mItems.get(position).isRupees()){
             double R_price = (double) mItems.get(position).getCurrentPrice();
@@ -89,26 +82,27 @@ int current =-1;
 
 
         }
-        int a =mItems.get(position).getChange();
+        double  a =mItems.get(position).getpChange();
 
-        if(a==-1){
-            holder.price_icon.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
-            holder.price_icon.setColorFilter(Color.RED);
-            holder.percent.setTextColor(Color.RED);
-            holder.percent.setText("-2.45%");
-        }
-        else if(a==1) {
-            holder.price_icon.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
-            holder.price_icon.setColorFilter(Color.GREEN);
-            holder.percent.setTextColor(Color.GREEN);
-            holder.percent.setText("+2.45%");
+        if(a<0){
+           holder.percent_image.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
+            holder.percent_image.setColorFilter(Color.RED);
+            holder.percent_text.setTextColor(Color.RED);
+            holder.percent_text.setText("-"+String.format("%.2f",a)+"%");
+
+         }
+        else if(a>0) {
+            holder.percent_image.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
+            holder.percent_image.setColorFilter(Color.parseColor("#006400"));
+            holder.percent_text.setTextColor(Color.parseColor("#006400"));
+            holder.percent_text.setText("+"+String.format("%.2f",a)+"%");
         }
         else {
-            holder.price_icon.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
-            holder.percent.setTextColor(Color.RED);
-            holder.percent.setTextColor(Color.GRAY);
-            holder.price_icon.setColorFilter(Color.WHITE);
-            holder.percent.setText("+0.00%");
+            holder.percent_image.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
+            holder.percent_text.setTextColor(Color.RED);
+            holder.percent_text.setTextColor(Color.GRAY);
+            holder.percent_image.setColorFilter(Color.GRAY);
+            holder.percent_text.setText("+0.00%");
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

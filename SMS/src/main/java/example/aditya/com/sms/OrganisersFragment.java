@@ -44,6 +44,8 @@ public class OrganisersFragment extends Fragment {
         conversion = view.findViewById(R.id.conversion);
         cashInHand_D = view.findViewById(R.id.decimal);
 
+        conversion.setText("1 $ = "+ String.valueOf(conv_rate) + " "+Rupees);
+
         news_btn = view.findViewById(R.id.news_btn);
         change_btn = view.findViewById(R.id.change_btn);
 
@@ -54,48 +56,38 @@ public class OrganisersFragment extends Fragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if(position == 0){
                     market_tv.setText("BSE");
-                    cashInHand.setText(Rupees + String.valueOf(cash_inhand));
-                    cashInHand_D.setText("00");
+                    cashInHand.setText(Rupees+String.format("%.2f", (double)cash_inhand));
                 }
                 else{
                     market_tv.setText("NYM");
                     if(conv_rate!=0){
-                        int D_Cash = cash_inhand/conv_rate;
-                        int D_Cash_Decimal = ((cash_inhand*100)/conv_rate)%100;
-
-                        cashInHand.setText("$ " + String.valueOf(D_Cash));
-                        cashInHand_D.setText(String.valueOf(D_Cash_Decimal));
+                        double D_Cash = cash_inhand/conv_rate;
+                    cashInHand.setText("$ "+String.format("%.2f", D_Cash));
                     }
                 }
             }
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
         cashInHand = view.findViewById(R.id.money);
-
-
         change_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
               changeButtonClicked();
             }
         });
-
         news_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 newsButtonClicked();
             }
         });
-
         return view;
     }
 
@@ -112,12 +104,10 @@ public class OrganisersFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
 
-
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new IndianStockFragment(), "");
         adapter.addFragment(new InternationalStockFragment(),"");
         viewPager.setAdapter(adapter);
-
 
     }
 

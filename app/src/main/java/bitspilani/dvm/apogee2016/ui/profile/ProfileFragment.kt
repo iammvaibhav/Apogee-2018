@@ -186,7 +186,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 val signedEvents1 = StringBuilder()
                                                 for (i in 0 until profShows.length()) {
                                                     val profshow = profShows.getJSONObject(i)
-                                                    val name = "${profshow.getString("prof_show_name")} | ID : ${profshow.getInt("number")}\nPasses Left: ${profshow.getInt("count") - profshow.getInt("passed_count")} | Used : ${profshow.getInt("passed_count")}\n\n"
+                                                    val name = "${profshow.getString("prof_show_name")} | ID : ${profshow.getInt("number")}\nPasses Left: ${profshow.getInt("count")} | Used : ${profshow.getInt("passed_count")}\n\n"
                                                     signedEvents1.append(name)
                                                 }
 
@@ -210,7 +210,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                             progressBar.visibility = View.INVISIBLE
                                             Log.e("dsf", anError?.errorBody ?: "" )
                                             Log.e("dsf", anError?.errorDetail ?: "" )
-                                            Log.e("dsf", anError?.errorCode.toString() ?: "" )
+                                            Log.e("dsf", anError?.errorCode.toString())
                                         }
                                     })
                         }catch (e: Exception) {

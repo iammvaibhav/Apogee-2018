@@ -23,6 +23,7 @@ import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.CloseBottomSheetListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnReceiptItemClickListener;
+import com.awesomecorp.sammy.apogeewallet.listners.ReceivedMoneyListener;
 import com.awesomecorp.sammy.apogeewallet.models.Bitsian;
 import com.awesomecorp.sammy.apogeewallet.models.Participant;
 import com.awesomecorp.sammy.apogeewallet.models.Sales;
@@ -66,6 +67,7 @@ public class WalletHomeFragment extends Fragment {
     AddMoneyButtonClickListener moneyButtonListener;
     OnReceiptItemClickListener onReceiptItemClickListener;
     CloseBottomSheetListener closeBottomSheetListener;
+    ReceivedMoneyListener receivedMoneyListener;
 
     ImageView addMoney;
     FirebaseDatabase database;
@@ -138,6 +140,7 @@ public class WalletHomeFragment extends Fragment {
         super.onAttach(context);
 
         try {
+            receivedMoneyListener = (ReceivedMoneyListener)context;
             closeBottomSheetListener = (CloseBottomSheetListener)context;
             backPressedListener = (BackPressedListener)context;
             moneyButtonListener = (AddMoneyButtonClickListener) context;
@@ -150,6 +153,7 @@ public class WalletHomeFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        receivedMoneyListener =null;
         closeBottomSheetListener = null;
         backPressedListener = null;
         moneyButtonListener = null;
@@ -166,13 +170,17 @@ public class WalletHomeFragment extends Fragment {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    fetchData();
+                    int count=0;
                     try{
                         transactions.clear();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             Log.e("Key", data.getKey());
+                            count++;
                             Transaction transaction = new Transaction();
                             String transactionType = data.child("t_type").getValue().toString();
+                            if (transactionType.equals("recieve") && count==1){
+                                fetchData();
+                            }
                             if (transactionType.equals("buy")){
                                 buy(transaction,data);
                             }else if (transactionType.equals("add")){
@@ -337,6 +345,8 @@ public class WalletHomeFragment extends Fragment {
         }
     }
     void receive(Transaction transaction, DataSnapshot dataSnapshot){
+//        fetchData();
+
         try {
             String dateOfTransaction = dataSnapshot.child("created_at").getValue().toString();
             transaction.setCreated_at(dateOfTransaction);

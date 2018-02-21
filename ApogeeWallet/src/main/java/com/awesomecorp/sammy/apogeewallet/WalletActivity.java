@@ -700,16 +700,22 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
                                 public void onResponse(final JSONObject response) {
                                     progressBar.setVisibility(View.INVISIBLE);
                                     try {
-                                        Log.e("Add Response", response.getString("url"));
+                                        Log.e("Add Response", response.toString());
 
                                         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
                                             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         }
 
-                                        url = response.getString("url");
-                                        flag_payment =true;
-                                        flag_qr = false;
-
+                                        int status = response.getInt("status");
+                                        if (status ==1){
+                                            url = response.getString("url");
+                                            flag_payment =true;
+                                            flag_qr = false;
+                                        }else if (status == 10){
+                                            Toast.makeText(context,"Under Construction. Not available currently",Toast.LENGTH_SHORT).show();
+                                        }else {
+                                            Toast.makeText(context,"Some error occurred. Please ",Toast.LENGTH_SHORT).show();
+                                        }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }

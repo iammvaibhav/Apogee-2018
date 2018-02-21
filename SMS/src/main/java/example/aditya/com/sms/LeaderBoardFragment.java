@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static example.aditya.com.sms.MainActivity.email;
 import static example.aditya.com.sms.URLs.KEY;
 import static example.aditya.com.sms.URLs.URL_LB;
 
@@ -33,22 +34,22 @@ public class LeaderBoardFragment extends Fragment {
     private static LeaderBoardAdapter adapter;
     public static ArrayList<User> lb_data;
 
-    String username = "test1";
-    String email = "test1@gmail.com";
+  //  String username = "test1";
+   // String email = "test1@gmail.com";
     static int userNum;
       @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lb_data = new ArrayList<>();
+          getLBData();
 
-    }
+      }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false);
-        getLBData();
 
         mRecyclerView = rootView.findViewById(R.id.recycler_view_recycler_view);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

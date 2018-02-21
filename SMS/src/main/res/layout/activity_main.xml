@@ -24,7 +24,8 @@
         android:elevation="10dp"
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation"
+        />
 
     <com.wunderlist.slidinglayer.SlidingLayer
         android:id="@+id/slidingLayer"

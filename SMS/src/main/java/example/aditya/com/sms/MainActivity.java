@@ -1,5 +1,6 @@
 package example.aditya.com.sms;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,10 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
@@ -30,10 +31,10 @@ import java.util.Map;
 
 import static example.aditya.com.sms.OrganisersFragment.cashInHand;
 import static example.aditya.com.sms.OrganisersFragment.conversion;
+import static example.aditya.com.sms.ProfileFragment.UserStocksData;
 import static example.aditya.com.sms.URLs.KEY;
 import static example.aditya.com.sms.URLs.URL_BUY_STOCK;
 import static example.aditya.com.sms.URLs.URL_CONV_RATE;
-import static example.aditya.com.sms.URLs.URL_GAME_SWITCH;
 import static example.aditya.com.sms.URLs.URL_LOGIN;
 import static example.aditya.com.sms.URLs.URL_SELL_STOCK;
 import static example.aditya.com.sms.URLs.URL_USER_DATA;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     static Button buy;
 
-    LottieAnimationView animationView;
 
     final static String USERNAME ="";
     final static String EMAIL ="";
@@ -65,14 +65,16 @@ public class MainActivity extends AppCompatActivity {
     static int quantity = 0;
     static int price;
     int max;
-    String username = "test1";
-    String email = "test1@gmail.com";
+  static  String username = "test1";
+  static  String email = "test1@gmail.com";
     TextView money_tv;
     static Stocks current_trading_stock;
 
    public static int cash_inhand;
-   public static int conv_rate;
+   public static double conv_rate = 64.0;
    static boolean buying = true;
+   public static boolean marketOpen = false;
+    static ProgressBar progressBar;
 
     private void getData() {
         login(username,email);
@@ -82,30 +84,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("default", MODE_PRIVATE);
+        username = prefs.getString("PREF_KEY_CURRENT_USER_USERNAME", "");
+        email = prefs.getString("PREF_KEY_CURRENT_USER_USERNAME", "") + "@pilani.bits-pilani.ac.in";
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.parseColor("#00aeef"));
         }
 
         getData();
-
         close = (ImageView)findViewById(R.id.close);
         plus = (ImageView)findViewById(R.id.plus);
         minus = (ImageView)findViewById(R.id.minus);
         itemName = (TextView) findViewById(R.id.stock_name);
-     //   desc = (TextView) findViewById(R.id.description);
         cost = (TextView) findViewById(R.id.cost_per_stock);
         quan = (TextView) findViewById(R.id.quantity);
         currency = (TextView) findViewById(R.id.currency);
         buy = (Button) findViewById(R.id.add_to_cart2);
-
-        UserData(email);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 slidingLayer.closeLayer(true);
             }
         });
-
+        progressBar = (ProgressBar) findViewById(R.id.pb);
+        progressBar.setVisibility(View.VISIBLE);
+       // progressBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,12 +148,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 buy.setEnabled(false);
+                progressBar.setVisibility(View.VISIBLE);
                 if(buying){
 
                 if(cash_inhand >= quantity*current_trading_stock.getCurrentPrice()){
                     BuyStocks(email,quantity,current_trading_stock.getId());
                 }
                 else{
+                    progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(MainActivity.this, "Not enough money available.", Toast.LENGTH_SHORT).show();
                 }
                 Log.e("Buying",current_trading_stock.toString());
@@ -174,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_dashboard);
 
-        convRate();
-        gameSwitch();
     }
 
 
@@ -190,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
             Fragment selectedFragment = null;
             if (item.getItemId() == R.id.navigation_home)
                     selectedFragment = new ProfileFragment();
-            else if (item.getItemId() == R.id.navigation_dashboard)
+                else if (item.getItemId() == R.id.navigation_dashboard)
                     selectedFragment = new OrganisersFragment();
-            else if (item.getItemId() == R.id.navigation_notifications)
+                else if (item.getItemId() == R.id.navigation_notifications)
                     selectedFragment = new LeaderBoardFragment();
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -203,7 +207,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    static void BuyButtonClicked(Stocks stock){
+   static void BuyButtonClicked(Stocks stock){
+        progressBar.setVisibility(View.INVISIBLE);
+
         current_trading_stock = stock;
         buying = true;
         buy.setEnabled(true);
@@ -221,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     static void SellButtonClicked(Stocks stock){
-
+        progressBar.setVisibility(View.INVISIBLE);
         price = stock.getCurrentPrice();
         current_trading_stock = stock;
         buy.setEnabled(true);
@@ -260,7 +266,11 @@ public class MainActivity extends AppCompatActivity {
                                         String username = response.getString("username");
 
                                         cash_inhand = (int)balance;
-                                        if(cashInHand!=null) cashInHand.setText(Rupees + String.valueOf(cash_inhand));
+                                        if(cashInHand!=null)
+                                        {
+                                            cashInHand.setText("₹ "+String.format("%.2f", (double)cash_inhand));
+                                        }
+                                        convRate();
 
                                         Log.d("Response", email+" "+balance+" "+username);
                                     } catch (Exception e) {
@@ -280,45 +290,14 @@ public class MainActivity extends AppCompatActivity {
               handler.post(new Runnable() {
                   @Override
                   public void run() {
-                      if(cashInHand!=null) cashInHand.setText(String.valueOf(cash_inhand));
+                      try {
+                          if (cashInHand != null)
+                              cashInHand.setText("₹ " + String.format("%.2f", (double) cash_inhand));
+
+                      }
+                      catch (Exception e){}
                   }
               });
-            }
-        });
-
-        thread.start();
-    }
-    static void gameSwitch() {
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("key",KEY);
-                  //  map.put("email", email);
-
-                    AndroidNetworking.post(URL_GAME_SWITCH).addBodyParameter(map).build()
-                            .getAsJSONObject(new JSONObjectRequestListener() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-
-                                        Log.d("Response", response.toString());
-                                    } catch (Exception e) {
-                                        Log.e("error", "error");
-                                    }
-                                }
-                                @Override
-                                public void onError(ANError anError) {
-                                    Log.e("Login", anError.getErrorDetail());
-
-                                }
-                            });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -341,8 +320,8 @@ public class MainActivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                        int conversion_rate = response.getInt("conversion_rate");
-                                        conv_rate = conversion_rate;
-                                        conversion.setText("1 $ = "+ String.valueOf(conv_rate) + " "+Rupees);
+                                        double conv_rate = conversion_rate/100.0;
+                                        conversion.setText("1 $ = "+ String.format("%.2f", (double) conv_rate) + " "+Rupees);
                                         Log.d("Response", response.toString());
                                     } catch (Exception e) {
                                         Log.e("error in conv_rate", "error");
@@ -362,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
         thread.start();
     }
-    static void BuyStocks(final String email, final int units, final int stock_id) {
+     void BuyStocks(final String email, final int units, final int stock_id) {
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -380,8 +359,15 @@ public class MainActivity extends AppCompatActivity {
                                     try {
                                         Log.d("Response", response.toString());
 //                                        showToast(response.get("message"))
+                                        if(response.toString().contains("SUCCESS"))
+                                        {
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            Toast.makeText(MainActivity.this, "Stock successfully purchased.", Toast.LENGTH_SHORT).show();
+                                        }
+
                                         closeDrawer();
                                         UserData(email);
+                                        UserStocksData(email);
                                     } catch (Exception e) {
                                         Log.e("error", "error");
                                     }
@@ -403,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
     private static void closeDrawer() {
         if(slidingLayer.isOpened()) slidingLayer.closeLayer(true);
     }
-    static void SellStocks(final String email, final int units, final int stock_id) {
+    void SellStocks(final String email, final int units, final int stock_id) {
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -420,8 +406,20 @@ public class MainActivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         Log.d("Response", response.toString());
+                                        //TODO
+                                        if(response.toString().contains("SUCCESS")) {
+                                            progressBar.setVisibility(View.INVISIBLE);
+
+                                            Toast.makeText(MainActivity.this, "Stock successfully sold. Please refresh the page.", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            Toast.makeText(MainActivity.this, "Not enough Stocks available.", Toast.LENGTH_SHORT).show();
+
+                                        }
                                         UserData(email);
                                         closeDrawer();
+                                        UserStocksData(email);
+
                                     } catch (Exception e) {
                                         Log.e("error", "error");
                                     }
@@ -454,7 +452,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
-                                        Log.d("Response", response.toString());
+                                        UserData(email);
+
                                     } catch (Exception e) {
                                         Log.e("error", "error");
                                     }

@@ -11,10 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static example.aditya.com.sms.URLs.KEY;
+import static example.aditya.com.sms.URLs.URL_GAME_SWITCH;
 import static example.aditya.com.sms.URLs.URL_STOCKS_DATA;
 
 
@@ -32,32 +36,12 @@ public class IndianStockFragment extends Fragment {
     private static RecyclerViewAdapter adapter;
     public static ArrayList<Stocks> stocksArrayList;
     Thread t;
+    ImageView img;
 
       @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-    if(t==null) {
-    System.out.print("starting thread");
-    Thread t = new Thread() {
-        @Override
-        public void run() {
-            while (!isInterrupted()) {
-                try {
-                    Thread.sleep(30000);  //30 sec
-                    AllStockData();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
-
-    t.start();
-}
-
+        gameSwitch();
     }
 
 
@@ -70,6 +54,7 @@ public class IndianStockFragment extends Fragment {
          stocksArrayList = new ArrayList<>();
          adapter = new RecyclerViewAdapter(getContext(),stocksArrayList,0);
          mRecyclerView.setAdapter(adapter);
+        img = rootView.findViewById(R.id.img_closed);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -78,13 +63,59 @@ public class IndianStockFragment extends Fragment {
                 DividerItemDecoration.VERTICAL
         );
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
-
-        AllStockData();
+        img.setVisibility(View.GONE);
          return rootView;
      }
+     void gameSwitch() {
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("key",KEY);
+                    //  map.put("email", email);
+
+                    AndroidNetworking.post(URL_GAME_SWITCH).addBodyParameter(map).build()
+                            .getAsJSONObject(new JSONObjectRequestListener() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        String status = response.getString("status_of_game");
+                                        if(status.equals("closed")){
+                                            Toast.makeText(getContext(), "Market is currently closed.", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                        //    Toast.makeText(getContext(), "Market is open.", Toast.LENGTH_SHORT).show();
+
+                                            Log.e("status","market is open");
+                                          //  img.setVisibility(View.GONE);
+                                            AllStockData();
+                                        }
+                                        Log.d("Response", response.toString());
+                                    } catch (Exception e) {
+                                        Log.e("error", "error");
+                                    }
+                                }
+                                @Override
+                                public void onError(ANError anError) {
+                                    Log.e("Login", anError.getErrorDetail());
+
+                                }
+                            });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+    }
 
 
-    static void AllStockData() {
+     void AllStockData() {
+         // img.setVisibility(View.GONE);
 
         Thread thread = new Thread(new Runnable() {
             @Override

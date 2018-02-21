@@ -387,10 +387,17 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
                                             public void run() {
                                                 Intent i = new Intent(activity, WebViewActivity.class);
                                                 try {
-                                                    i.putExtra("url",response.getString("url"));
-                                                    startActivity(i);
-                                                    finish();
-                                                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                                                    int status = response.getInt("status");
+                                                    if (status ==1){
+                                                        i.putExtra("url",response.getString("url"));
+                                                        startActivity(i);
+                                                        finish();
+                                                        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                                                    }else if (status == 10){
+                                                        Toast.makeText(context,"Under Construction. Not available currently",Toast.LENGTH_SHORT).show();
+                                                    }else {
+                                                        Toast.makeText(context,"Some error occurred. Please ",Toast.LENGTH_SHORT).show();
+                                                    }
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
                                                 }

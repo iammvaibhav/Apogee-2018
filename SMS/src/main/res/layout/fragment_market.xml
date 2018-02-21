@@ -11,5 +11,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="50dp"/>
-
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/img_closed"
+    android:src="@drawable/market_closed"
+    android:visibility="gone"/>
         </RelativeLayout>

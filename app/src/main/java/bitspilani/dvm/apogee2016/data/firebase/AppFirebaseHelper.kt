@@ -77,8 +77,13 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (child in snapshot.children) {
-                    val sponsor = child.getValue(Sponsor::class.java)
+                    try {
+                        val sponsor = child.getValue(Sponsor::class.java)
+
                     if (sponsor != null) sponsors.add(sponsor)
+                    }catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 sponsors.sortBy { it.id }
@@ -94,9 +99,14 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
-                    val event = it.getValue(Event::class.java)
-                    if (event != null)
-                        set.add(event.venue)
+                    try {
+
+                        val event = it.getValue(Event::class.java)
+                        if (event != null)
+                            set.add(event.venue)
+                    }catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 val list = set.toMutableList()
@@ -113,9 +123,13 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
-                    val event = it.getValue(Event::class.java)
-                    if (event != null)
-                        set.add(event.category)
+                    try {
+                        val event = it.getValue(Event::class.java)
+                        if (event != null)
+                            set.add(event.category)
+                    }catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 val list = set.toMutableList()

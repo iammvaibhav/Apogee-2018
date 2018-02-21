@@ -21,7 +21,7 @@
         android:id="@+id/stock_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="STOCK XYZ"
+        android:text=""
         android:textSize="30sp"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
@@ -46,7 +46,7 @@
         android:id="@+id/cost_per_stock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50.00"
+        android:text=""
         android:textSize="20dp"
         android:layout_gravity="center_horizontal"
          android:textColor="#fff"/>
@@ -120,6 +120,12 @@
         android:textSize="18dp"
         android:background="@drawable/button_background_1"/>
 
+    <ProgressBar
+        android:id="@+id/pb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        />
 
 
 </LinearLayout>

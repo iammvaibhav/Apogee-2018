@@ -7,11 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -325,9 +324,18 @@ public class OrderPlaceIntermediateActivity extends AppCompatActivity {
                                             public void run() {
                                                 Intent i = new Intent(activity, WebViewActivity.class);
                                                 try {
-                                                    i.putExtra("url",response.getString("url"));
-                                                    startActivity(i);
-                                                    finish();
+
+                                                    int status = response.getInt("status");
+                                                    if (status ==1){
+                                                        i.putExtra("url",response.getString("url"));
+                                                        startActivity(i);
+                                                        finish();
+                                                    }else if (status == 10){
+                                                        Toast.makeText(context,"Under Construction. Not available currently",Toast.LENGTH_SHORT).show();
+                                                    }else {
+                                                        Toast.makeText(context,"Some error occurred. Please ",Toast.LENGTH_SHORT).show();
+                                                    }
+
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
                                                 }

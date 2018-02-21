@@ -104,11 +104,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.MyViewHo
         if(profit>=0){
             holder.profit_text.setText("Profit");
             holder.imageView.setImageResource(R.drawable.ic_arrow_drop_up_black_24dp);
-            holder.profit_tv.setTextColor(Color.GREEN);
-            holder.profit_text.setTextColor(Color.GREEN
-            );
-            holder.profit_percent_tv.setTextColor(Color.GREEN);
-            holder.imageView.setColorFilter(Color.GREEN);
+            holder.profit_tv.setTextColor(Color.parseColor("#006400"));
+            holder.profit_text.setTextColor(Color.parseColor("#006400"));
+            holder.profit_percent_tv.setTextColor(Color.parseColor("#006400"));
+            holder.imageView.setColorFilter(Color.parseColor("#006400"));
         }
         else{
             holder.profit_text.setText("Loss");
