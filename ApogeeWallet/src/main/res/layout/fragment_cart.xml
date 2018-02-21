@@ -65,6 +65,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="33dp"
         android:visibility="invisible"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorAccent"
+        android:indeterminateTintMode="src_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />

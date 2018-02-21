@@ -70,7 +70,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
     LayoutInflater inflater;
     FloatingActionButton floatingActionButton;
     BottomSheetBehavior sheetBehavior;
-
+    boolean placed;
     void setTypefaces(){
         montBold = Typeface.createFromAsset(getAssets(),"fonts/Montserrat-Bold.ttf");
         montLight = Typeface.createFromAsset(getAssets(),"fonts/Montserrat-Light.ttf");
@@ -97,6 +97,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
 
         context=this;
         activity=this;
+        placed = false;
 
         database = FirebaseDatabase.getInstance();
         preferences = getApplicationContext().getSharedPreferences("details",MODE_PRIVATE);
@@ -106,6 +107,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
         bottomSheet = findViewById(R.id.bottom_sheet);
         sheetBehavior= BottomSheetBehavior.from(bottomSheet);
         floatingActionButton = findViewById(R.id.central);
+        floatingActionButton.setEnabled(true);
         inflater = LayoutInflater.from(context);
         bottomSheetContents = findViewById(R.id.bottom_sheet_content);
 
@@ -161,6 +163,8 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        placed = true;
+                        floatingActionButton.setEnabled(false);
                         cartFragment.startProgressBar();
                         sendCartRequest();
                     }
@@ -169,6 +173,9 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 alert.dismiss();
+                if (placed!=true){
+                    floatingActionButton.setEnabled(true);
+                }
             }
         });
 
