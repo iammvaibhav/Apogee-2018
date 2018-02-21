@@ -11,8 +11,6 @@ import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.PathShape
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +18,7 @@ import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -39,7 +38,6 @@ import bitspilani.dvm.apogee2016.ui.events.EventsFragment
 import bitspilani.dvm.apogee2016.ui.informatives.*
 import bitspilani.dvm.apogee2016.ui.login.LoginActivity
 import bitspilani.dvm.apogee2016.ui.profile.ProfileFragment
-import bitspilani.dvm.apogee2016.utils.PathParser
 import com.awesomecorp.sammy.apogeewallet.WalletActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -47,6 +45,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
+import example.aditya.com.sms.MainActivity
 import kotlinx.android.synthetic.main.event_bottom_sheet.*
 import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen.*
@@ -202,6 +201,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         emergency.setOnClickListener(this)
         developers.setOnClickListener(this)
         blog.setOnClickListener(this)
+        sms.setOnClickListener(this)
+
+        drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, Gravity.END)
 
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
@@ -387,6 +389,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 addFragment(DevelopersFragment())
                 drawerLayout.closeDrawer(Gravity.START)
             }
+            R.id.sms -> {
+                startActivity(Intent(this@MainActivity, MainActivity::class.java))
+            }
         }
     }
 
@@ -521,7 +526,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         canvas.drawRect(0f, 0f, eventBottomSheet.width.toFloat(), eventBottomSheet.height.toFloat(), paint)
         //canvas.drawBitmap(backgroundArt, 0f, 0f, paint)
 
-        val path = PathParser.createPathFromPathData(pathData)
+        /*val path = PathParser.createPathFromPathData(pathData)
         val shape = ShapeDrawable(PathShape(path, eventBottomSheet.width.toFloat(), eventBottomSheet.height.toFloat()))
         shape.setBounds(0, 0, eventBottomSheet.width, eventBottomSheet.height)
         shape.paint.color = Color.BLACK
@@ -531,7 +536,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         val canvasTemp = Canvas(bitmapTemp)
         shape.draw(canvasTemp)
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
-        canvas.drawBitmap(bitmapTemp, 0f, 0f, paint)
+        canvas.drawBitmap(bitmapTemp, 0f, 0f, paint)*/
 
         return BitmapDrawable(resources, bitmap)
     }

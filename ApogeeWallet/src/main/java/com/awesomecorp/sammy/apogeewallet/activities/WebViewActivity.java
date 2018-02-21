@@ -88,7 +88,7 @@ public class WebViewActivity extends AppCompatActivity {
         reference.child("wallet").child(walletID).child("wallet").child("curr_balance").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!balance.equals(dataSnapshot.getValue().toString())){
+                if(!balance.equals(dataSnapshot.getValue() + "")){
                     if (activity!=null){
                         if (preferences.getBoolean("to_be_ordered",false)){
                             Intent intent = new Intent(activity, OrderPlaceIntermediateActivity.class);

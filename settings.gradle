@@ -1,1 +1,1 @@
-include ':app', ':ApogeeWallet'
+include ':app', ':ApogeeWallet', ':SMS'

@@ -104,7 +104,7 @@ class ContactFragment : BaseFragment(){
                     activity.startActivity(Intent.createChooser(emailIntent, "Send mail..."))
                     Log.i("Finished email", "")
                 } catch (ex: android.content.ActivityNotFoundException) {
-                    Toast.makeText(context,
+                    Toast.makeText(activity,
                             "There is no email client installed.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -126,14 +126,15 @@ class ContactFragment : BaseFragment(){
             emailListenerHelper.onEmailClick("${(v as TextView).text}")
         }
 
-        val data = arrayOf(ContactData(R.drawable.pcr, "Asim Shah", "Registration & Other Enquiries", "pcr@bits-oasis.org", "", emailListener, phoneListener),
-                ContactData(R.drawable.controls, "Nisanth Varma", "Events, Competitions and operations", "controls@bits-oasis.org", "+91 80588 77118", emailListener, phoneListener),
-                ContactData(R.drawable.sponz, "Siddhant Narula", "Sponsorship and Marketing", "sponsorship@bits-oasis.org", "+91 99822 00768", emailListener, phoneListener),
-                ContactData(R.drawable.dvm, "Arjun Tyagi", "Website, App & Online Payments", "webmaster@bits-oasis.org", "+91 88750 52545", emailListener, phoneListener),
-                ContactData(R.drawable.adp, "Gowtam Chandrahasa", "Art, Design & Publicity", "adp@bits-oasis.org", "+91 99820 84940", emailListener, phoneListener),
-                ContactData(R.drawable.recnacc, "Arnav Kundra", "Reception and Accommodation", "recnacc@bits-oasis.org", "+91 99280 26633", emailListener, phoneListener),
-                ContactData(R.drawable.prez, "Bharatha Ratna Puli", "President, Students Union", "president@bits-oasis.org", "+91 82970 39977", emailListener, phoneListener),
-                ContactData(R.drawable.gensec, "Shivam Jindal", "General Secretary, Students Union", "gensec@bits-oasis.org", "+91 97170 24281", emailListener, phoneListener))
+        val data = arrayOf(ContactData(R.drawable.pcr, "Alanckrit Jain", "Registration & Other Enquiries", "pcr@bits-apogee.org", "", emailListener, phoneListener),
+                ContactData(R.drawable.controls, "Himangshu Baid", "Events, Competitions and operations", "controls@bits-apogee.org", "+91-9704050069", emailListener, phoneListener),
+                ContactData(R.drawable.sponz, "Keshav Jain", "Sponsorship and Marketing", "sponsorship@bits-apogee.org", "+91-8320841501", emailListener, phoneListener),
+                ContactData(R.drawable.dvm, "Hitesh Raghuvanshi", "Website, App & Online Payments", "webmaster@bits-apogee.org", "+91-8003398809", emailListener, phoneListener),
+                ContactData(R.drawable.adp, "Vaibhav Jain", "Art, Design & Publicity", "adp@bits-apogee.org", "+91-8239737593", emailListener, phoneListener),
+                ContactData(R.drawable.placeholder, "Anshuman Sharma", "Reception and Accommodation", "recnacc@bits-apogee.org", "+91-9425331555", emailListener, phoneListener),
+                ContactData(R.drawable.prez, "Bharatha Ratna Puli", "President, Students Union", "president@pilani.bits-pilani.ac.in", "+91-8297039977", emailListener, phoneListener),
+                ContactData(R.drawable.gensec, "Shivam Jindal", "General Secretary, Students Union", "gensec@pilani.bits-pilani.ac.in", "+91-9717024281", emailListener, phoneListener),
+                ContactData(R.drawable.placeholder, "Abhishek Gupta", "Paper Presentations and Guest Lectures", "pep@bits-apogee.org", "+91-9453212629", emailListener, phoneListener))
 
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = ContactAdapter(data, typeface, activity)

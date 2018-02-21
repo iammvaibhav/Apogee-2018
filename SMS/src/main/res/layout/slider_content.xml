@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/back_blue"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center_horizontal"
+         android:padding="10dp"
+        android:src="@drawable/close" />
+
+    <TextView
+        android:id="@+id/stock_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STOCK XYZ"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#fff"/>
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="20dp"
+
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:textSize="20dp"
+        android:layout_gravity="center_horizontal"
+         android:textColor="#fff"/>
+    <TextView
+        android:id="@+id/cost_per_stock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="50.00"
+        android:textSize="20dp"
+        android:layout_gravity="center_horizontal"
+         android:textColor="#fff"/>
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/minus"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|right"
+            android:layout_weight="0.3"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/minus"/>
+
+        <TextView
+            android:id="@+id/quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="40sp"
+            android:textColor="#fff"
+            android:textAlignment="center"
+            android:layout_weight=".4"
+            android:layout_gravity="center_horizontal"
+            />
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_weight=".3"
+            android:layout_gravity="center|left"
+            android:layout_marginRight="70dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/plus"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_marginTop="10dp"
+        android:layout_width="250dp"
+        android:layout_height="2.5dp"
+        android:background="#fff"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="QUANTITY"
+        android:textColor="#fff"
+        android:textSize="15dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+
+    <Button
+        android:id="@+id/add_to_cart2"
+        android:layout_width="300dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/blue"
+        android:text="BUY"
+        android:textSize="18dp"
+        android:background="@drawable/button_background_1"/>
+
+
+
+</LinearLayout>

@@ -91,7 +91,9 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
             profilePresenter.getDataManager().setUserLoggedIn(false)
             profilePresenter.getDataManager().setCurrentUserName("")
             profilePresenter.getDataManager().setQrCode("")
+            profilePresenter.getDataManager().setCurrentUserProfileURL("")
             profilePresenter.getDataManager().setSignedEvents("")
+            qrcodeImage.setImageBitmap(null)
             loggedOutMessage.visibility = View.VISIBLE
             profileDetails.visibility = View.GONE
         }
@@ -103,7 +105,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
         progressBar.visibility = View.VISIBLE
 
         name.text = profilePresenter.getDataManager().getCurrentUserName()
-        who.text = if (profilePresenter.getDataManager().getIsBitsian()) "bitsian" else "outstee"
+        who.text = profilePresenter.getDataManager().getCurrentUserProfileURL()
         //qrcode.text = profilePresenter.getDataManager().getQrCode()
         signedEvents.text = profilePresenter.getDataManager().getSignedEvents()
 
@@ -155,6 +157,12 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 profilePresenter.getDataManager().setCurrentUserName(response.getJSONObject(who1).getString("name") ?: "")
                                                 profilePresenter.getDataManager().setQrCode(response.getJSONObject("wallet").getString("uid") ?: "")
 
+                                                if (who1 == "bitsian") {
+                                                    profilePresenter.getDataManager().setCurrentUserProfileURL("BITS Pilani")
+                                                }else {
+                                                    profilePresenter.getDataManager().setCurrentUserProfileURL(response.getJSONObject(who1).getString("college_name") ?: "")
+                                                }
+
                                                 if (profilePresenter.getDataManager().getQrCode() != "") {
                                                     val writer = QRCodeWriter()
                                                     try {
@@ -178,12 +186,16 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 val signedEvents1 = StringBuilder()
                                                 for (i in 0 until profShows.length()) {
                                                     val profshow = profShows.getJSONObject(i)
-                                                    val name = "${profshow.getString("prof_show_name")} | Total Signed: ${profshow.getInt("count")} | Used : ${profshow.getInt("passed_count")}\n"
+                                                    val name = "${profshow.getString("prof_show_name")} | Passes Left: ${profshow.getInt("count") - profshow.getInt("passed_count")} | Used : ${profshow.getInt("passed_count")}\n"
                                                     signedEvents1.append(name)
                                                 }
 
+                                                if (signedEvents1.toString() == "")
+                                                    signedEvents1.append("None")
+
                                                 profilePresenter.getDataManager().setSignedEvents(signedEvents1.toString())
                                                 name.text = response.getJSONObject(who1).getString("name") ?: ""
+                                                who.text = profilePresenter.getDataManager().getCurrentUserProfileURL()
                                                 //qrcode.text = response.getJSONObject(who1).getString("barcode") ?: ""
                                                 signedEvents.text = signedEvents1.toString()
                                             }catch (e: Exception) {

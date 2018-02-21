@@ -1,0 +1,119 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+               android:orientation="vertical"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+         >
+    <!-- TODO: Update blank fragment layout -->
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="horizontal"
+                     android:visibility="gone"
+            >
+
+            <TableRow>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:padding="10dp"
+                    android:id="@+id/name"
+                    android:layout_alignParentTop="true"
+                     android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="\u20B9 150.00"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:padding="10dp"
+                    android:gravity="right"
+                    android:id="@+id/worth"
+                    android:layout_alignParentTop="true"
+
+                    android:layout_weight="1"
+                    />
+
+            </TableRow>
+
+        </TableLayout>
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         android:layout_margin="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/subLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:gravity="center"
+            android:textSize="20sp"
+
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="Rank"
+          />
+        <TextView
+            android:id="@+id/subLabe2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="User Name"
+            android:textSize="20sp"
+             />
+
+        <TextView
+            android:id="@+id/subLabe3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:gravity="center"
+            android:textSize="20sp"
+
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="Net Worth"
+           />
+
+    </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="5dp"
+            android:text="Leaderboard"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/header"
+        android:paddingBottom="57dp"/>
+
+
+
+
+</LinearLayout>

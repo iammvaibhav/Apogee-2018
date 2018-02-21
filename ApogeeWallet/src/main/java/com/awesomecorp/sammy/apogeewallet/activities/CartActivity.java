@@ -7,11 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +31,6 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.WalletActivity;
 import com.awesomecorp.sammy.apogeewallet.fragments.CartFragment;
-import com.awesomecorp.sammy.apogeewallet.fragments.OrderFoodFragment;
-import com.awesomecorp.sammy.apogeewallet.fragments.WalletLoadFragment;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnGotoShopButtonListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnRemoveFromCartListener;
@@ -463,7 +461,7 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
                                             if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                                                 sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                             }
-                                            sendCartRequest();
+                                            fetchData();
                                         }else {
 
                                             Toast.makeText(getApplicationContext(), response.getString("message"), Toast.LENGTH_LONG).show();
@@ -498,4 +496,56 @@ public class CartActivity extends AppCompatActivity implements BackPressedListen
     public void onBackButtonFragment() {
         super.onBackPressed();
     }
+
+    void fetchData(){
+
+        JSONObject jsonObject = userObject();
+        Log.e("Here",jsonObject.toString());
+
+        AndroidNetworking.post(URLS.api_token).addJSONObjectBody(jsonObject).build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String token = response.getString("token");
+                            Log.e("Token",token);
+
+                            AndroidNetworking.post(URLS.get_profile).addJSONObjectBody(Utils.walletSecret())
+                                    .addHeaders("Authorization","JWT " + token).build().getAsJSONObject(new JSONObjectRequestListener() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    successFetch(response);
+                                }
+
+                                @Override
+                                public void onError(ANError anError) {
+                                    Log.e("Error", anError.toString());
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e("Error", anError.toString());
+                    }
+                });
+    }
+
+    void successFetch(JSONObject response){
+        try {
+            String balance = response.getJSONObject("wallet").getString("curr_balance");
+            Log.e("TAG: ",response.toString());
+            editor.putString("balance",balance);
+            editor.commit();
+            sendCartRequest();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

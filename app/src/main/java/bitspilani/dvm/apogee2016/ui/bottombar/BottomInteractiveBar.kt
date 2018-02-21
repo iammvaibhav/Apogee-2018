@@ -143,7 +143,7 @@ class BottomInteractiveBar(context: Context, attributeSet: AttributeSet?) : View
         canvas.drawRect(baseRect, basePaint)
         canvas.drawRect(shadowRect, shadowPaint)
 
-        shadowDrawable.draw(canvas)
+        //shadowDrawable.draw(canvas)
         centerIconDrawableBackground.draw(canvas)
         centerIcon?.draw(canvas)
 

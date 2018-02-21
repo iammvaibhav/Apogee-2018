@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.awesomecorp.sammy.apogeewallet.WalletActivity">
         <FrameLayout android:id="@+id/content"
             android:layout_width="match_parent"
@@ -37,7 +38,9 @@
                         android:focusable="true"
                         android:scaleX=".7"
                         android:scaleY=".7"
-                        android:src="@drawable/wallet_icon" />
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_wallet_icon" />
 
                     <ImageButton
                         android:id="@+id/shops"

@@ -154,6 +154,7 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/button"
         android:text="rules"
+        android:visibility="gone"
         android:textColor="@color/button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

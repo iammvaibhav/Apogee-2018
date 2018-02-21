@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="example.aditya.com.sms.MainActivity"
+   >
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    </RelativeLayout>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        android:layout_alignParentBottom="true"
+        android:elevation="10dp"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:menu="@menu/navigation" />
+
+    <com.wunderlist.slidinglayer.SlidingLayer
+        android:id="@+id/slidingLayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:elevation="15dp"
+        app:changeStateOnTap="false"
+        app:stickTo="bottom">
+
+        <include
+            layout="@layout/slider_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </include>
+
+    </com.wunderlist.slidinglayer.SlidingLayer>
+</RelativeLayout>

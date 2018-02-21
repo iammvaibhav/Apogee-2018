@@ -1,11 +1,13 @@
 package com.awesomecorp.sammy.apogeewallet;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -137,10 +140,14 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
                 Log.e("New State",String.valueOf(flag_qr));
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED){
                     if(flag_qr){
-                        Intent intent = new Intent(activity,QrScanActivity.class);
-                        intent.putExtra("scan","transfer");
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                        if (ActivityCompat.checkSelfPermission(WalletActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(WalletActivity.this, new String[] {Manifest.permission.CAMERA}, 700);
+                        }else{
+                            Intent intent = new Intent(activity,QrScanActivity.class);
+                            intent.putExtra("scan","transfer");
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                        }
                     }else if (flag_payment){
                         Intent i = new Intent(activity, WebViewActivity.class);
                         i.putExtra("url", url);
@@ -164,10 +171,15 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
         qrScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity,QrScanActivity.class);
-                intent.putExtra("scan","shop");
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+
+                if (ActivityCompat.checkSelfPermission(WalletActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(WalletActivity.this, new String[] {Manifest.permission.CAMERA}, 699);
+                }else{
+                    Intent intent = new Intent(activity,QrScanActivity.class);
+                    intent.putExtra("scan","shop");
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                }
             }
         });
         database = FirebaseDatabase.getInstance();
@@ -331,6 +343,34 @@ public class WalletActivity extends FragmentActivity implements TransactionCompl
 
         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode==699){
+            if (grantResults.length>0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(activity,QrScanActivity.class);
+                    intent.putExtra("scan","shop");
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please allow permissions to continue", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        if(requestCode==700){
+            if (grantResults.length>0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(activity,QrScanActivity.class);
+                    intent.putExtra("scan","transfer");
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please allow permissions to continue", Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 

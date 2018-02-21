@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.adapters.RecieptItemAdapter;
 import com.awesomecorp.sammy.apogeewallet.listners.AddMoneyButtonClickListener;
@@ -26,19 +29,26 @@ import com.awesomecorp.sammy.apogeewallet.models.Stall;
 import com.awesomecorp.sammy.apogeewallet.models.Transaction;
 import com.awesomecorp.sammy.apogeewallet.models.Transfer;
 import com.awesomecorp.sammy.apogeewallet.utils.TransactionComparator;
+import com.awesomecorp.sammy.apogeewallet.utils.URLS;
+import com.awesomecorp.sammy.apogeewallet.utils.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.awesomecorp.sammy.apogeewallet.utils.Utils.userObject;
 
 public class WalletHomeFragment extends Fragment {
 
@@ -50,7 +60,7 @@ public class WalletHomeFragment extends Fragment {
     SimpleDateFormat format;
     private RecyclerView.LayoutManager layoutManager;
     SharedPreferences preferences;
-
+    TextView balance;
     BackPressedListener backPressedListener;
     AddMoneyButtonClickListener moneyButtonListener;
     OnReceiptItemClickListener onReceiptItemClickListener;
@@ -77,7 +87,7 @@ public class WalletHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        format = new SimpleDateFormat("dd MMM hh:mm a");
+        format = new SimpleDateFormat("dd MMM hh:mm a", Locale.US);
         View view= inflater.inflate(R.layout.fragment_wallet_home, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         addMoney = view.findViewById(R.id.add_money);
@@ -92,7 +102,7 @@ public class WalletHomeFragment extends Fragment {
         Typeface montBold = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Montserrat-Bold.ttf");
         Typeface montSemiBold = Typeface.createFromAsset(getActivity().getAssets(),"fonts/Montserrat-SemiBold.ttf");
         TextView header = view.findViewById(R.id.textView);
-        TextView balance = view.findViewById(R.id.textView2);
+        balance = view.findViewById(R.id.textView2);
         balance.setText(preferences.getString("balance","--"));
 
         TextView spentText = view.findViewById(R.id.textView3);
@@ -152,6 +162,7 @@ public class WalletHomeFragment extends Fragment {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    fetchData();
                     try{
                         transactions.clear();
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -352,6 +363,64 @@ public class WalletHomeFragment extends Fragment {
                 e.printStackTrace();
             }
         }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    void fetchData(){
+
+        JSONObject jsonObject = userObject();
+        Log.e("Here",jsonObject.toString());
+
+        AndroidNetworking.post(URLS.api_token).addJSONObjectBody(jsonObject).build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String token = response.getString("token");
+                            Log.e("Token",token);
+
+                            AndroidNetworking.post(URLS.get_profile).addJSONObjectBody(Utils.walletSecret())
+                                    .addHeaders("Authorization","JWT " + token).build().getAsJSONObject(new JSONObjectRequestListener() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    successFetch(response);
+                                }
+
+                                @Override
+                                public void onError(ANError anError) {
+                                    Log.e("Error", anError.toString());
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e("Error", anError.toString());
+                    }
+                });
+    }
+
+    void successFetch(JSONObject response){
+        try {
+            String balance1 = response.getJSONObject("wallet").getString("curr_balance");
+            Log.e("TAG: ",response.toString());
+            try {
+
+                SharedPreferences.Editor editor = getActivity().getApplicationContext().getSharedPreferences("details",MODE_PRIVATE).edit();
+                editor.putString("balance",balance1);
+                balance.setText(balance1);
+                editor.commit();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

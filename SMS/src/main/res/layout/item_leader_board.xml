@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/card_view_item_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/card_margin_vertical_big_activity"
+    android:layout_marginTop="@dimen/card_margin_vertical_big_activity"
+    android:foreground="?attr/selectableItemBackground"
+    card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
+    card_view:cardElevation="@dimen/card_recycler_elevation"
+    android:orientation="horizontal"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/rank_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:lines="1"
+        android:text="Aditya"
+        android:textSize="30sp"/>
+    <TextView
+         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="₹"
+         android:layout_marginRight="5dp"
+
+         android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/worth_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="100"
+        android:textSize="30sp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_person_black_24dp"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/user_icon"
+        android:tint="@color/blue"/>
+
+ </LinearLayout>

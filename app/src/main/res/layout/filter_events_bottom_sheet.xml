@@ -14,6 +14,7 @@
         android:layout_gravity="center_horizontal"
         app:srcCompat="@drawable/ic_close"
         android:padding="15dp"
+        android:visibility="gone"
         android:layout_marginRight="7dp"/>
 
     <TextView

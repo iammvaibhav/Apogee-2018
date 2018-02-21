@@ -1,41 +1,36 @@
 package com.awesomecorp.sammy.apogeewallet.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
-import com.awesomecorp.sammy.apogeewallet.QrScanActivity;
 import com.awesomecorp.sammy.apogeewallet.R;
 import com.awesomecorp.sammy.apogeewallet.WalletActivity;
-import com.awesomecorp.sammy.apogeewallet.fragments.CartFragment;
 import com.awesomecorp.sammy.apogeewallet.fragments.ItemsViewFragment;
 import com.awesomecorp.sammy.apogeewallet.fragments.OrderFoodFragment;
 import com.awesomecorp.sammy.apogeewallet.listners.BackPressedListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnAddToCartButtonListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnCartViewButtonListener;
 import com.awesomecorp.sammy.apogeewallet.listners.OnViewItemsClickedListener;
-import com.awesomecorp.sammy.apogeewallet.listners.ShopLoadListener;
 import com.awesomecorp.sammy.apogeewallet.models.Item;
 import com.awesomecorp.sammy.apogeewallet.models.Shop;
 import com.awesomecorp.sammy.apogeewallet.utils.Utils;
@@ -130,8 +125,8 @@ public class ShopActivity extends AppCompatActivity implements BackPressedListen
             }
         });
 
-        ImageButton profile = findViewById(R.id.profile);
-        ImageButton wallet = findViewById(R.id.wallet);
+        ImageView profile = findViewById(R.id.profile);
+        ImageView wallet = findViewById(R.id.wallet);
 
         wallet.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -69,6 +69,7 @@ public class QrScanActivity extends AppCompatActivity implements QRCodeReaderVie
             }
         });
         qrCodeReaderView.startCamera();
+        Log.e("fdsf", "dsf");
         qrCodeReaderView.setQRDecodingEnabled(true);
         qrCodeReaderView.setTorchEnabled(false);
         qrCodeReaderView.setBackCamera();
