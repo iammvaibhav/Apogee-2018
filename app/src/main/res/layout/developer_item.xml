@@ -3,7 +3,7 @@
     <data>
         <variable
             name="data"
-            type="bitspilani.dvm.apogee2016.ui.informatives.DevelopersData"/>
+            type="org.dvm.bits_apogee.ui.informatives.DevelopersData"/>
         <variable
             name="typeface"
             type="android.graphics.Typeface"/>

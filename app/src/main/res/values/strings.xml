@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Apogee2018</string>
+    <string name="app_name">Apogee 2018</string>
     <string name="navigation_item_profile">Profile</string>
     <string name="navigation_item_events">Events</string>
     <string name="navigation_item_map">Map</string>

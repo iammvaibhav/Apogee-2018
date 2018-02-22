@@ -29,35 +29,7 @@
         android:scaleType="centerInside"
         android:layout_marginTop="16dp" />
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="28dp"
-        android:text="NAME"
-        android:textAllCaps="true"
-        android:layout_marginTop="12dp"
-        android:textColor="#000"/>
-    <TextView
-        android:id="@+id/who"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="14dp"
-        android:textAllCaps="true"
-        android:text="BITSIAN/OUTSTEE"
-        android:textColor="#000"/>
 
-
-    <TextView
-        android:id="@+id/qrcode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textSize="14dp"
-        android:text=""
-        android:textColor="#000"/>
 
 
     <ScrollView
@@ -77,6 +49,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="28dp"
+                android:text="NAME"
+                android:gravity="center_horizontal"
+                android:textAllCaps="true"
+                android:layout_marginTop="12dp"
+                android:textColor="#000"/>
+            <TextView
+                android:id="@+id/who"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14dp"
+                android:textAllCaps="true"
+                android:text="BITSIAN/OUTSTEE"
+                android:textColor="#000"/>
+
+
+            <TextView
+                android:id="@+id/qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14dp"
+                android:text=""
+                android:textColor="#000"/>
 
         <TextView
             android:layout_width="wrap_content"

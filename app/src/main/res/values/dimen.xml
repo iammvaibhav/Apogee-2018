@@ -14,6 +14,7 @@
     <dimen name="subLabelSizeMin">10sp</dimen>
     <dimen name="eventItemHeadingSizeMax">24dp</dimen>
     <dimen name="eventItemVTSizeMax">18dp</dimen>
+    <dimen name="eventItemVTSizeMin">16dp</dimen>
     <dimen name="recyclerViewLRPadding">40dp</dimen>
     <dimen name="recyclerViewTopPadding">18dp</dimen>
 </resources>

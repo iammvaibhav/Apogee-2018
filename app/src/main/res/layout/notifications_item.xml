@@ -2,7 +2,7 @@
 <layout>
     <data>
         <variable name="data"
-            type="bitspilani.dvm.apogee2016.ui.informatives.NotificationData"/>
+            type="org.dvm.bits_apogee.ui.informatives.NotificationData"/>
         <variable
             name="typeface"
             type="android.graphics.Typeface"/>

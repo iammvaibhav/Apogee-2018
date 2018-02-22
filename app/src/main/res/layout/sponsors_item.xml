@@ -3,7 +3,7 @@
     <data>
         <variable
             name="data"
-            type="bitspilani.dvm.apogee2016.data.firebase.model.Sponsor"/>
+            type="org.dvm.bits_apogee.data.firebase.model.Sponsor"/>
         <variable
             name="typeface"
             type="android.graphics.Typeface"/>
