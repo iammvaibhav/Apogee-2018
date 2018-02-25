@@ -1,7 +1,6 @@
 package org.dvm.bits_apogee.ui.profile
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -18,12 +17,12 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import org.dvm.bits_apogee.R
+import org.dvm.bits_apogee.data.dataManager
 import org.dvm.bits_apogee.ui.base.BaseFragment
 import org.dvm.bits_apogee.ui.login.LoginActivity
 import org.dvm.bits_apogee.utils.URL
 import org.dvm.bits_apogee.utils.toPx
 import org.json.JSONObject
-import javax.inject.Inject
 
 
 /**
@@ -31,9 +30,6 @@ import javax.inject.Inject
  */
 
 class ProfileFragment : BaseFragment(), ProfileMvpView {
-
-    @Inject
-    lateinit var profilePresenter: ProfilePresenter<ProfileMvpView>
 
     lateinit var progressBar: ProgressBar
     lateinit var name: TextView
@@ -49,14 +45,9 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
     lateinit var message: TextView
     lateinit var signIn: Button
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getFragmentComponent().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.profile_fragment, container, false)
-        profilePresenter.onAttach(this)
 
         progressBar = view.findViewById(R.id.progress1)
         name = view.findViewById(R.id.name)
@@ -73,7 +64,7 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
 
         message.text = "YOU ARE NOT LOGGED IN\nPlease login to access QR Code"
 
-        if (!profilePresenter.getDataManager().getUserLoggedIn()) {
+        if (!dataManager.getDataManager().getUserLoggedIn()) {
             loggedOutMessage.visibility = View.VISIBLE
             profileDetails.visibility = View.GONE
         } else {
@@ -88,11 +79,11 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
         }
 
         logout.setOnClickListener {
-            profilePresenter.getDataManager().setUserLoggedIn(false)
-            profilePresenter.getDataManager().setCurrentUserName("")
-            profilePresenter.getDataManager().setQrCode("")
-            profilePresenter.getDataManager().setCurrentUserProfileURL("")
-            profilePresenter.getDataManager().setSignedEvents("")
+            dataManager.getDataManager().setUserLoggedIn(false)
+            dataManager.getDataManager().setCurrentUserName("")
+            dataManager.getDataManager().setQrCode("")
+            dataManager.getDataManager().setCurrentUserProfileURL("")
+            dataManager.getDataManager().setSignedEvents("")
             qrcodeImage.setImageBitmap(null)
             loggedOutMessage.visibility = View.VISIBLE
             profileDetails.visibility = View.GONE
@@ -104,16 +95,16 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
     fun afterLogin() {
         progressBar.visibility = View.VISIBLE
 
-        name.text = profilePresenter.getDataManager().getCurrentUserName()
-        who.text = profilePresenter.getDataManager().getCurrentUserProfileURL()
+        name.text = dataManager.getDataManager().getCurrentUserName()
+        who.text = dataManager.getDataManager().getCurrentUserProfileURL()
         //qrcode.text = profilePresenter.getDataManager().getQrCode()
-        signedEvents.text = profilePresenter.getDataManager().getSignedEvents()
+        signedEvents.text = dataManager.getDataManager().getSignedEvents()
 
 
-        if (profilePresenter.getDataManager().getQrCode() != "") {
+        if (dataManager.getDataManager().getQrCode() != "") {
             val writer = QRCodeWriter()
             try {
-                val bitMatrix = writer.encode(profilePresenter.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
+                val bitMatrix = writer.encode(dataManager.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
                 val width = bitMatrix.width
                 val height = bitMatrix.height
                 Thread {
@@ -132,8 +123,8 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
         }
 
         val credentials = JSONObject()
-        credentials.put("username", profilePresenter.getDataManager().getCurrentUserUsername())
-        credentials.put("password", profilePresenter.getDataManager().getCurrentUserPassword())
+        credentials.put("username", dataManager.getDataManager().getCurrentUserUsername())
+        credentials.put("password", dataManager.getDataManager().getCurrentUserPassword())
         AndroidNetworking.post(URL.API_TOKEN)
                 .addJSONObjectBody(credentials)
                 .build()
@@ -154,19 +145,19 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 progressBar.visibility = View.INVISIBLE
                                                 val isBitsian = response.getJSONObject("wallet").getBoolean("is_bitsian")
                                                 var who1 = if (isBitsian) "bitsian" else "participant"
-                                                profilePresenter.getDataManager().setCurrentUserName(response.getJSONObject(who1).getString("name") ?: "")
-                                                profilePresenter.getDataManager().setQrCode(response.getJSONObject("wallet").getString("uid") ?: "")
+                                                dataManager.getDataManager().setCurrentUserName(response.getJSONObject(who1).getString("name") ?: "")
+                                                dataManager.getDataManager().setQrCode(response.getJSONObject("wallet").getString("uid") ?: "")
 
                                                 if (who1 == "bitsian") {
-                                                    profilePresenter.getDataManager().setCurrentUserProfileURL("BITS Pilani")
+                                                    dataManager.getDataManager().setCurrentUserProfileURL("BITS Pilani")
                                                 }else {
-                                                    profilePresenter.getDataManager().setCurrentUserProfileURL(response.getJSONObject(who1).getString("college_name") ?: "")
+                                                    dataManager.getDataManager().setCurrentUserProfileURL(response.getJSONObject(who1).getString("college_name") ?: "")
                                                 }
 
-                                                if (profilePresenter.getDataManager().getQrCode() != "") {
+                                                if (dataManager.getDataManager().getQrCode() != "") {
                                                     val writer = QRCodeWriter()
                                                     try {
-                                                        val bitMatrix = writer.encode(profilePresenter.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
+                                                        val bitMatrix = writer.encode(dataManager.getDataManager().getQrCode(), BarcodeFormat.QR_CODE, 150.toPx(), 150.toPx())
                                                         val width = bitMatrix.width
                                                         val height = bitMatrix.height
                                                         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
@@ -193,9 +184,9 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
                                                 if (signedEvents1.toString() == "")
                                                     signedEvents1.append("None")
 
-                                                profilePresenter.getDataManager().setSignedEvents(signedEvents1.toString())
+                                                dataManager.getDataManager().setSignedEvents(signedEvents1.toString())
                                                 name.text = response.getJSONObject(who1).getString("name") ?: ""
-                                                who.text = profilePresenter.getDataManager().getCurrentUserProfileURL()
+                                                who.text = dataManager.getDataManager().getCurrentUserProfileURL()
                                                 //qrcode.text = response.getJSONObject(who1).getString("barcode") ?: ""
                                                 signedEvents.text = signedEvents1.toString()
                                             }catch (e: Exception) {
@@ -243,8 +234,4 @@ class ProfileFragment : BaseFragment(), ProfileMvpView {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        profilePresenter.onDetach()
-    }
 }

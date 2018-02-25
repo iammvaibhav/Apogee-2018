@@ -1,5 +1,6 @@
 package org.dvm.bits_apogee.data
 
+import android.content.Context
 import org.dvm.bits_apogee.data.firebase.AppFirebaseHelper
 import org.dvm.bits_apogee.data.firebase.model.Event
 import org.dvm.bits_apogee.data.firebase.model.FilterEvents
@@ -7,21 +8,23 @@ import org.dvm.bits_apogee.data.firebase.model.Sponsor
 import org.dvm.bits_apogee.data.prefs.AppPreferencesHelper
 import org.dvm.bits_apogee.data.prefs.model.CurrentUser
 import org.dvm.bits_apogee.ui.informatives.NotificationData
-import javax.inject.Inject
 
 /**
  * Created by Vaibhav on 24-01-2018.
  */
 
+object dataManager {
+    lateinit var dM: DataManager
 
-class AppDataManager @Inject constructor(val firebase: AppFirebaseHelper, val pref: AppPreferencesHelper) : DataManager {
-
-    lateinit var fb: AppFirebaseHelper
-    lateinit var prf: AppPreferencesHelper
-
-    companion object {
-        fun getDataManager(): DataManager
+    fun getDataManager() = dM
+    fun setDataManager(context: Context) {
+        val prefhelper = AppPreferencesHelper(context)
+        val fbhelper = AppFirebaseHelper(prefhelper)
+        dM = AppDataManager(fbhelper, prefhelper)
     }
+}
+
+class AppDataManager constructor(val firebase: AppFirebaseHelper, val pref: AppPreferencesHelper) : DataManager {
 
     override fun addAsFavourite(id: Int) { pref.addAsFavourite(id) }
 

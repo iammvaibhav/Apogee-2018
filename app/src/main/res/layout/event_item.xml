@@ -28,27 +28,21 @@
         <TextView
             android:id="@+id/venue"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:text="Venue"
             android:textColor="#707070"
-            app:autoSizeMaxTextSize="@dimen/eventItemVTSizeMax"
-            app:autoSizeMinTextSize="@dimen/eventItemVTSizeMin"
-            app:autoSizeStepGranularity="2sp"
-            app:autoSizeTextType="uniform"
+            android:textSize="@dimen/eventItemVTSizeMax"
             tools:ignore="MissingPrefix" />
 
         <TextView
             android:id="@+id/time"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:text="Time"
             android:textColor="#707070"
-            app:autoSizeMaxTextSize="@dimen/eventItemVTSizeMax"
-            app:autoSizeMinTextSize="@dimen/eventItemVTSizeMin"
-            app:autoSizeStepGranularity="2sp"
-            app:autoSizeTextType="uniform"
+            android:textSize="@dimen/eventItemVTSizeMax"
             tools:ignore="MissingPrefix" />
 
         <android.support.v4.widget.Space

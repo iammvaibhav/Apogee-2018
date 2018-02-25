@@ -9,13 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import org.dvm.bits_apogee.R
 import org.dvm.bits_apogee.databinding.DeveloperItemBinding
-import org.dvm.bits_apogee.di.SemiBold
 import org.dvm.bits_apogee.ui.base.BaseFragment
-import org.dvm.bits_apogee.ui.main.MainActivity
-import com.squareup.picasso.Picasso
-import javax.inject.Inject
 
 data class DevelopersData(val image: Int, val name: String, val type: String)
 
@@ -42,31 +39,23 @@ class DevelopersAdapter(val data: Array<DevelopersData>, val typeface: Typeface,
 class DevelopersFragment : BaseFragment(){
 
 
-    @Inject
-    @field:SemiBold
     lateinit var typeface: Typeface
 
     lateinit var recyclerView: RecyclerView
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getFragmentComponent().inject(this)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_developers, container, false)
+        typeface = Typeface.DEFAULT_BOLD
         view.findViewById<TextView>(R.id.departmentText).typeface = typeface
-        (getBaseActivity() as MainActivity).setHeading("Developers")
         recyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        val data = arrayOf(DevelopersData(R.drawable.vaibhav, "Vaibhav Maheshwari", "UI/UX | Backend Developer"),
-                DevelopersData(R.drawable.sombuddha, "Sammy", "Backend Developer"),
-                DevelopersData(R.drawable.madhur, "Madhur Wadhwa", "UI Designer"),
-                DevelopersData(R.drawable.tushy, "Tushar Goel", "REST API Developer"),
-                DevelopersData(R.drawable.megh, "Megh Thakkar", "REST API Developer"),
-                DevelopersData(R.drawable.laddha, "Laddha", "App Developer"),
-                DevelopersData(R.drawable.annie, "Annie Rawat", "App Developer"))
+        val data = arrayOf(DevelopersData(R.drawable.madhur, "Madhur Wadhwa", "UI/UX Designer"),
+                DevelopersData(R.drawable.vaibhav, "Vaibhav Maheshwari", "App Developer"),
+                DevelopersData(R.drawable.sombuddha, "Sammy", "App Developer"),
+                DevelopersData(R.drawable.laddha, "Aditya Laddha", "App Developer"),
+                DevelopersData(R.drawable.tushy, "Tushar Goel", "Backend Developer"),
+                DevelopersData(R.drawable.megh, "Megh Thakkar", "Backend Developer"))
 
         recyclerView.adapter = DevelopersAdapter(data, typeface, activity)
         return view

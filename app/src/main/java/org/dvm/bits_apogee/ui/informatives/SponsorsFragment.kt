@@ -8,15 +8,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.squareup.picasso.Picasso
 import org.dvm.bits_apogee.R
-import org.dvm.bits_apogee.data.DataManager
+import org.dvm.bits_apogee.data.dataManager
 import org.dvm.bits_apogee.data.firebase.model.Sponsor
 import org.dvm.bits_apogee.databinding.SponsorsItemBinding
-import org.dvm.bits_apogee.di.SemiBold
 import org.dvm.bits_apogee.ui.base.BaseFragment
-import org.dvm.bits_apogee.ui.main.MainActivity
-import com.squareup.picasso.Picasso
-import javax.inject.Inject
 
 class SponsorsViewHolder(val binding: SponsorsItemBinding) : RecyclerView.ViewHolder(binding.root){
     fun bindData(data: Sponsor, typeface: Typeface){
@@ -45,28 +42,20 @@ class SponsorsAdapter(val typeface: Typeface, val context: Context, val sponsors
 
 class SponsorsFragment : BaseFragment(){
 
-    @Inject
-    @field:SemiBold
     lateinit var typeface: Typeface
-
-    @Inject
-    lateinit var dataManager: DataManager
-
     lateinit var recyclerView: RecyclerView
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getFragmentComponent().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_sponsors, container, false)
-        (getBaseActivity() as MainActivity).setHeading("Sponsors")
         recyclerView = view.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-
-        dataManager.getSponsors { recyclerView.adapter = SponsorsAdapter(typeface, activity, it) }
-
+        typeface = Typeface.DEFAULT_BOLD
         return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        dataManager.getDataManager().getSponsors { recyclerView.adapter = SponsorsAdapter(typeface, activity, it) }
     }
 }

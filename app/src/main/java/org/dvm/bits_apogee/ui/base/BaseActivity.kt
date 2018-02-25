@@ -6,10 +6,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
-import org.dvm.bits_apogee.App
-import org.dvm.bits_apogee.di.component.ActivityComponent
-import org.dvm.bits_apogee.di.component.DaggerActivityComponent
-import org.dvm.bits_apogee.di.module.ActivityModule
 
 /**
  * Created by Vaibhav on 24-01-2018.
@@ -17,18 +13,9 @@ import org.dvm.bits_apogee.di.module.ActivityModule
 
 abstract class BaseActivity : AppCompatActivity(), MvpView {
 
-    private lateinit var mActivityComponent: ActivityComponent
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mActivityComponent = DaggerActivityComponent.builder()
-                .activityModule(ActivityModule(this))
-                .applicationComponent((applicationContext as App).getApplicationComponent())
-                .build()
     }
-
-    fun getActivityComponent() = mActivityComponent
 
     private fun showSnackBar(message: String) {
         val snackbar = Snackbar.make(findViewById(android.R.id.content),

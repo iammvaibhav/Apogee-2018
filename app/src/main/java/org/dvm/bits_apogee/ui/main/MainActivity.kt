@@ -30,17 +30,16 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import example.aditya.com.sms.MainActivity
 import kotlinx.android.synthetic.main.event_bottom_sheet.*
 import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen.*
 import kotlinx.android.synthetic.main.main_screen_main_content.*
 import kotlinx.android.synthetic.main.right_drawer.*
 import org.dvm.bits_apogee.R
+import org.dvm.bits_apogee.data.dataManager
 import org.dvm.bits_apogee.data.firebase.model.Event
 import org.dvm.bits_apogee.data.firebase.model.FilterEvents
 import org.dvm.bits_apogee.data.firebase.model.ShowBy
-import org.dvm.bits_apogee.di.SemiBold
 import org.dvm.bits_apogee.ui.base.BaseActivity
 import org.dvm.bits_apogee.ui.bottombar.BottomInteractiveBarOnClickListener
 import org.dvm.bits_apogee.ui.events.EventClickListener
@@ -48,7 +47,6 @@ import org.dvm.bits_apogee.ui.events.EventsFragment
 import org.dvm.bits_apogee.ui.informatives.*
 import org.dvm.bits_apogee.ui.login.LoginActivity
 import org.dvm.bits_apogee.ui.profile.ProfileFragment
-import javax.inject.Inject
 
 /**
  * Created by Vaibhav on 29-01-2018.
@@ -56,8 +54,6 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventClickListener, OnMapReadyCallback {
 
-    @Inject
-    lateinit var mainPresenter: MainPresenter<MainMvpView>
 
     lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
 
@@ -101,8 +97,6 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
     var currColor = CC.getScreenColorFor(0).colorC
 
-    @Inject
-    @field:SemiBold
     lateinit var semiBold: Typeface
 
     companion object {
@@ -116,8 +110,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
         setContentView(R.layout.main_screen)
 
-        getActivityComponent().inject(this)
-        mainPresenter.onAttach(this)
+        semiBold = Typeface.createFromAsset(assets, "fonts/semiBold.otf")
 
         bottomSheetBehavior = BottomSheetBehavior.from(eventBottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -168,8 +161,8 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         close2.setOnClickListener(this)
         back.setOnClickListener(this@MainActivity)
 
-        mainPresenter.getVenueList { venueList.addAll(it) }
-        mainPresenter.getCategoryList { categoryList.addAll(it) }
+        dataManager.getDataManager().getVenueList { venueList.addAll(it) }
+        dataManager.getDataManager().getCategoryList { categoryList.addAll(it) }
 
         hamburger.setOnClickListener(this)
         options.setOnClickListener(this)
@@ -191,7 +184,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
 
         bib.setBottomInteractiveBarOnClickListener(object : BottomInteractiveBarOnClickListener {
             override fun onCenterButtonClick() {
-                if (mainPresenter.getDataManager().getUserLoggedIn())
+                if (dataManager.getDataManager().getUserLoggedIn())
                     startActivity(Intent(this@MainActivity, WalletActivity::class.java))
                 else
                     startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), 99)
@@ -207,9 +200,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                         setHeading("events")
                         addFragment(eventsFragment)
                         val filterE = FilterEvents()
-                        mainPresenter.getDataManager().getEvents(filterE) {
+                        dataManager.getDataManager().getEvents(filterE) {
                             filterEvents = filterE
-                            eventsFragment.setViewPagerAdapter(filterE, it, mainPresenter.getDataManager())
+                            eventsFragment.setViewPagerAdapter(filterE, it)
                         }
                     }
                     2 -> {
@@ -223,9 +216,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                         addFragment(eventsFragment)
                         val filterE = FilterEvents()
                         filterE.filterByOngoing = true
-                        mainPresenter.getDataManager().getEvents(filterE) {
+                        dataManager.getDataManager().getEvents(filterE) {
                             filterEvents = filterE
-                            eventsFragment.setViewPagerAdapter(filterE, it, mainPresenter.getDataManager())
+                            eventsFragment.setViewPagerAdapter(filterE, it)
                         }
                     }
                 }
@@ -234,8 +227,8 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
     }
 
     fun initialize() {
-        mainPresenter.getDataManager().getEvents(filterEvents) {
-            eventsFragment.setViewPagerAdapter(filterEvents, it, mainPresenter.getDataManager())
+        dataManager.getDataManager().getEvents(filterEvents) {
+            eventsFragment.setViewPagerAdapter(filterEvents, it)
         }
     }
 
@@ -300,10 +293,10 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
             }
             R.id.apply -> {
                 Log.e("filters", filterEventsCurrSession.toString())
-                mainPresenter.fetchQueries(filterEventsCurrSession) {
+                dataManager.getDataManager().getEvents(filterEventsCurrSession) {
                     filterEvents = filterEventsCurrSession
                     //TODO("reflect fetched data")
-                    eventsFragment.setViewPagerAdapter(filterEvents, it, mainPresenter.getDataManager())
+                    eventsFragment.setViewPagerAdapter(filterEvents, it)
                     Log.e("filtered", it.toString())
                 }
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -332,7 +325,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 addFragment(eventsFragment)
                 val filterE = FilterEvents()
                 filterE.showBy = ShowBy.CATEGORY
-                mainPresenter.getDataManager().getCategoryList {
+                dataManager.getDataManager().getCategoryList {
                     val x = it.toMutableList()
                     val y = x.iterator()
                     while (y.hasNext()) {
@@ -341,9 +334,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                     }
 
                     filterE.excludeCategory.addAll(x)
-                    mainPresenter.getDataManager().getEvents(filterE) {
+                    dataManager.getDataManager().getEvents(filterE) {
                         filterEvents = filterE
-                        eventsFragment.setViewPagerAdapter(filterE, it, mainPresenter.getDataManager())
+                        eventsFragment.setViewPagerAdapter(filterE, it)
                     }
                 }
                 drawerLayout.closeDrawer(Gravity.START)
@@ -352,9 +345,9 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 setHeading("events")
                 addFragment(eventsFragment)
                 val filterE = FilterEvents()
-                mainPresenter.getDataManager().getEvents(filterE) {
+                dataManager.getDataManager().getEvents(filterE) {
                     filterEvents = filterE
-                    eventsFragment.setViewPagerAdapter(filterE, it, mainPresenter.getDataManager())
+                    eventsFragment.setViewPagerAdapter(filterE, it)
                 }
                 drawerLayout.closeDrawer(Gravity.START)
             }
@@ -379,7 +372,7 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
                 drawerLayout.closeDrawer(Gravity.START)
             }
             R.id.sms -> {
-                startActivity(Intent(this@MainActivity, MainActivity::class.java))
+
             }
         }
     }
@@ -486,10 +479,6 @@ class MainActivity : BaseActivity(), MainMvpView, View.OnClickListener, EventCli
         googleMap?.isBuildingsEnabled = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mainPresenter.onDetach()
-    }
 
     /*private fun getBottomSheetBackground(color: Int): Drawable {
         val pathData = "M0,2018.4v-1915h358.9a99.5,99.5 0,0 0,66.9 -49.1A105.4,105.4 0,0 1,518.1 0a105.4,105.4 0,0 1,92.3 54.3A99.3,99.3 0,0 0,677.2 103.4L1080,103.4v1915Z"

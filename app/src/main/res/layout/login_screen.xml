@@ -41,7 +41,7 @@
             android:layout_width="100dp"
             android:layout_height="35dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/button_filled"
+            android:background="#fff"
             android:gravity="center"
             android:text="Login"
             android:textColor="#FF0077"

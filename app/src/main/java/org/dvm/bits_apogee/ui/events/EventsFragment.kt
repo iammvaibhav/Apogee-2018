@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.left_drawer.*
 import kotlinx.android.synthetic.main.main_screen_main_content.*
 import kotlinx.android.synthetic.main.right_drawer.*
 import org.dvm.bits_apogee.R
-import org.dvm.bits_apogee.data.DataManager
+import org.dvm.bits_apogee.data.dataManager
 import org.dvm.bits_apogee.data.firebase.model.Event
 import org.dvm.bits_apogee.data.firebase.model.FilterEvents
 import org.dvm.bits_apogee.data.firebase.model.ShowBy
@@ -80,13 +80,9 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
-    fun setViewPagerAdapter(filterEvents: FilterEvents, data : List<Pair<String, List<Event>>>, dataManager: DataManager) {
+    fun setViewPagerAdapter(filterEvents: FilterEvents, data : List<Pair<String, List<Event>>>) {
         val showBy = if(filterEvents.showBy == ShowBy.DATE) 0 else 1
-        viewPager.adapter = EventsViewPagerAdapter(data, showBy, dataManager, lightFont, regularFont, eventClickListener)
+        viewPager.adapter = EventsViewPagerAdapter(data, showBy, dataManager.getDataManager(), lightFont, regularFont, eventClickListener)
         if (data.isNotEmpty())
                 heading.text = data[0].first
         else heading.text = "NO RESULTS"
@@ -114,13 +110,14 @@ class EventsFragment : BaseFragment(), EventsMvpView, ViewPager.OnPageChangeList
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             try {
                 activity.window.statusBarColor = evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorC, CC.getScreenColorFor(position + 1).colorC) as Int
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
             heading.setTextColor(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
             next.setColorFilter(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
             prev.setColorFilter(evaluator.evaluate(positionOffset, CC.getScreenColorFor(position).colorB, CC.getScreenColorFor(position + 1).colorB) as Int)
-        }
+
     }
 
     override fun onPageSelected(position: Int) {

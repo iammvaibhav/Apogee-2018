@@ -1,18 +1,14 @@
 package org.dvm.bits_apogee.data.prefs
 
 import android.content.Context
-import org.dvm.bits_apogee.di.ApplicationContext
-import org.dvm.bits_apogee.di.PerActivity
 import org.dvm.bits_apogee.ui.informatives.NotificationData
-import javax.inject.Inject
 
 
 /**
  * Created by Vaibhav on 24-01-2018.
  */
 
-@PerActivity
-class AppPreferencesHelper @Inject constructor(@ApplicationContext context: Context): PreferencesHelper {
+class AppPreferencesHelper constructor(context: Context): PreferencesHelper {
 
     private val sharedPreferences = context.getSharedPreferences("default", Context.MODE_PRIVATE)
 

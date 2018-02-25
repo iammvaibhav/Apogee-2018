@@ -2,8 +2,6 @@ package org.dvm.bits_apogee.ui.base
 
 import android.app.Fragment
 import android.content.Context
-import org.dvm.bits_apogee.di.component.DaggerFragmentComponent
-import org.dvm.bits_apogee.di.component.FragmentComponent
 
 
 
@@ -15,30 +13,13 @@ import org.dvm.bits_apogee.di.component.FragmentComponent
 
 abstract class BaseFragment : Fragment(), MvpView {
 
-    private lateinit var mActivity: BaseActivity
-    private lateinit var mFragmentComponent: FragmentComponent
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BaseActivity) {
-            this.mActivity = context
-        }
-        mFragmentComponent = DaggerFragmentComponent.builder()
-                .activityComponent(getBaseActivity().getActivityComponent())
-                .build()
     }
 
     override fun onError(message: String?) {
-        if (mActivity != null) {
-            mActivity.onError(message)
+        if (activity != null && activity is BaseActivity) {
+            (activity as BaseActivity).onError(message)
         }
     }
-
-    fun getBaseActivity(): BaseActivity {
-        return mActivity
-    }
-
-    fun getFragmentComponent() = mFragmentComponent
-
-
 }

@@ -10,17 +10,14 @@ import org.dvm.bits_apogee.data.firebase.model.FilterEvents
 import org.dvm.bits_apogee.data.firebase.model.ShowBy
 import org.dvm.bits_apogee.data.firebase.model.Sponsor
 import org.dvm.bits_apogee.data.prefs.AppPreferencesHelper
-import org.dvm.bits_apogee.di.PerActivity
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 /**
  * Created by Vaibhav on 23-01-2018.
  */
 
-@PerActivity
-class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : FirebaseHelper {
+class AppFirebaseHelper constructor(val pref: AppPreferencesHelper) : FirebaseHelper {
 
     private val dateFormat = SimpleDateFormat("dd M yyyy HH:mm")
     private val data = mutableListOf<Pair<String, List<Event>>>()
@@ -190,9 +187,26 @@ class AppFirebaseHelper @Inject constructor(val pref: AppPreferencesHelper) : Fi
         return !(filterEvents.excludeCategory.contains(event.category) || filterEvents.excludeVenue.contains(event.venue))
     }
 
+
     private fun sortDataList() {
         data.sortBy { it.first }
-        data.forEach { it.second.sortedBy { it.startTime } }
+        data.forEach { Collections.sort(it.second) { e1, e2 ->
+            var date1 = Date()
+            var date2 = Date()
+
+            try {
+                date1 = dateFormat.parse("${e1.day} 2 2018 ${e1.startTime}")
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+            try {
+                date2 = dateFormat.parse("${e2.day} 2 2018 ${e2.startTime}")
+            }catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return@sort date1.compareTo(date2)
+        } }
     }
 
 }

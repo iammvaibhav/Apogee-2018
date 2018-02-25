@@ -6,24 +6,22 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.view.View
-import org.dvm.bits_apogee.R
-import org.dvm.bits_apogee.ui.base.BaseActivity
-import org.dvm.bits_apogee.utils.URL
 import com.androidnetworking.AndroidNetworking
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.JSONObjectRequestListener
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.*
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.login_screen.*
+import org.dvm.bits_apogee.R
+import org.dvm.bits_apogee.data.dataManager
+import org.dvm.bits_apogee.ui.base.BaseActivity
+import org.dvm.bits_apogee.utils.URL
 import org.json.JSONObject
-import javax.inject.Inject
 
 /**
  * Created by Vaibhav on 11-02-2018.
@@ -31,18 +29,19 @@ import javax.inject.Inject
 
 class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
 
-    val RC_SIGN_IN = 12
+    companion object {
+        init {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        }
+    }
 
-    @Inject
-    lateinit var loginPresenter: LoginPresenter<LoginMvpView>
+    val RC_SIGN_IN = 12
 
     lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_screen)
-        getActivityComponent().inject(this)
-        loginPresenter.onAttach(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             window.statusBarColor = Color.parseColor("#FF0077")
@@ -103,10 +102,10 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
                         .getAsJSONObject(object : JSONObjectRequestListener {
                             override fun onResponse(response: JSONObject) {
                                 if (response.has("token")) {
-                                    loginPresenter.getDataManager().setUserLoggedIn(true)
-                                    loginPresenter.getDataManager().setCurrentUserUsername(credentials.getString("username"))
-                                    loginPresenter.getDataManager().setCurrentUserPassword(credentials.getString("password"))
-                                    loginPresenter.getDataManager().setIsBitsian(false)
+                                    dataManager.getDataManager().setUserLoggedIn(true)
+                                    dataManager.getDataManager().setCurrentUserUsername(credentials.getString("username"))
+                                    dataManager.getDataManager().setCurrentUserPassword(credentials.getString("password"))
+                                    dataManager.getDataManager().setIsBitsian(false)
 
                                     val intent = Intent()
                                     intent.putExtra("username", credentials.getString("username"))
@@ -151,10 +150,10 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
                     override fun onResponse(response: JSONObject) {
                         progress.visibility = View.INVISIBLE
                         if (response.has("username") && response.has("password")) {
-                            loginPresenter.getDataManager().setUserLoggedIn(true)
-                            loginPresenter.getDataManager().setCurrentUserUsername(response.getString("username"))
-                            loginPresenter.getDataManager().setCurrentUserPassword(response.getString("password"))
-                            loginPresenter.getDataManager().setIsBitsian(true)
+                            dataManager.getDataManager().setUserLoggedIn(true)
+                            dataManager.getDataManager().setCurrentUserUsername(response.getString("username"))
+                            dataManager.getDataManager().setCurrentUserPassword(response.getString("password"))
+                            dataManager.getDataManager().setIsBitsian(true)
                             val intent = Intent()
                             Log.e("hio", "i ma here")
                             intent.putExtra("username", response.getString("username"))
@@ -193,6 +192,7 @@ class LoginActivity : BaseActivity(), LoginMvpView, View.OnClickListener {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.e("Error", "signInResult:failed code=" + e.statusCode)
+            Log.e("Error", "sdjsjdkl" + GoogleSignInStatusCodes.getStatusCodeString(e.statusCode))
             Snackbar.make(root, "Error! Please try again", Snackbar.LENGTH_LONG).show()
         }
 

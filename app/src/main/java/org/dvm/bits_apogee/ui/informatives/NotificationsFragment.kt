@@ -1,6 +1,5 @@
 package org.dvm.bits_apogee.ui.informatives
 
-import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -9,14 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.dvm.bits_apogee.R
-import org.dvm.bits_apogee.data.DataManager
+import org.dvm.bits_apogee.data.dataManager
 import org.dvm.bits_apogee.databinding.NotificationsItemBinding
-import org.dvm.bits_apogee.di.SemiBold
 import org.dvm.bits_apogee.ui.base.BaseFragment
-import org.dvm.bits_apogee.ui.main.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 data class NotificationData(val title: String, val body: String, val timeReceived: String, val date: Date) {
 
@@ -54,24 +50,14 @@ class NotificationsAdapter(val typeface: Typeface, val notifications: List<Notif
 
 class NotificationsFragment : BaseFragment(){
 
-    @Inject
-    @field:SemiBold
     lateinit var typeface: Typeface
 
-    @Inject
-    lateinit var dataManager: DataManager
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getFragmentComponent().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
-        (getBaseActivity() as MainActivity).setHeading("Notifications")
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
+        typeface = Typeface.DEFAULT_BOLD
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
-        val notifications = dataManager.getNotifications()
+        val notifications = dataManager.getDataManager().getNotifications()
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = NotificationsAdapter(typeface, notifications)
         return view

@@ -13,14 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import com.squareup.picasso.Picasso
 import org.dvm.bits_apogee.R
 import org.dvm.bits_apogee.databinding.ContactItemBinding
 import org.dvm.bits_apogee.databinding.ContactItemFirstBinding
-import org.dvm.bits_apogee.di.SemiBold
 import org.dvm.bits_apogee.ui.base.BaseFragment
-import org.dvm.bits_apogee.ui.main.MainActivity
-import com.squareup.picasso.Picasso
-import javax.inject.Inject
 
 
 interface phoneOnClickListener{
@@ -70,21 +67,14 @@ class ContactAdapter(val data: Array<ContactData>, val typeface: Typeface, val c
 
 class ContactFragment : BaseFragment(){
 
-    @Inject
-    @field:SemiBold
     lateinit var typeface: Typeface
 
     lateinit var recycler_view: RecyclerView
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        getFragmentComponent().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_contact, container, false)
 
-        (getBaseActivity() as MainActivity).setHeading("Contact")
 
         recycler_view = view.findViewById(R.id.recycler_view)
 
@@ -136,9 +126,11 @@ class ContactFragment : BaseFragment(){
                 ContactData(R.drawable.gensec, "Shivam Jindal", "General Secretary, Students Union", "gensec@pilani.bits-pilani.ac.in", "+91-9717024281", emailListener, phoneListener),
                 ContactData(R.drawable.placeholder, "Abhishek Gupta", "Paper Presentations and Guest Lectures", "pep@bits-apogee.org", "+91-9453212629", emailListener, phoneListener))
 
+        typeface = Typeface.MONOSPACE
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.adapter = ContactAdapter(data, typeface, activity)
 
         return view
     }
+
 }
